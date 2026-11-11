@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     "private",
     "offline",
     "Windows",
+    "Linux",
     "GPU",
   ],
   alternates: { canonical: "/" },
@@ -57,7 +58,7 @@ const jsonLd = {
   "@type": "SoftwareApplication",
   name: site.name,
   applicationCategory: "MultimediaApplication",
-  operatingSystem: "Windows",
+  operatingSystem: "Windows, Linux",
   description: site.description,
   downloadUrl: site.download,
 };

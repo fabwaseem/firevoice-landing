@@ -94,7 +94,7 @@ export function Nav() {
           <div className="flex items-center gap-1.5">
             <SoundToggle />
             <ThemeToggle />
-            <a href={site.download} className="btn-fire hidden !h-9 !px-4 !text-sm sm:inline-flex">
+            <a href={site.downloadWindows} className="btn-fire hidden !h-9 !px-4 !text-sm sm:inline-flex">
               <WindowsIcon className="size-3.5" /> Download
             </a>
             <button
@@ -131,8 +131,13 @@ export function Nav() {
                   </li>
                 ))}
                 <li className="pt-2">
-                  <a href={site.download} className="btn-fire w-full">
+                  <a href={site.downloadWindows} className="btn-fire w-full">
                     <WindowsIcon className="size-4" /> Download for Windows
+                  </a>
+                </li>
+                <li>
+                  <a href={site.downloadLinux} className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-line text-ink">
+                    Download for Linux
                   </a>
                 </li>
               </ul>

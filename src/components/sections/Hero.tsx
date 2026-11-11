@@ -33,13 +33,19 @@ export function Hero() {
           style={i(2)}
           className="enter mt-7 max-w-[34rem] text-pretty text-[17px] leading-relaxed text-white/65 sm:text-lg"
         >
-          Lifelike speech, voice cloning and dictation that run entirely on your own GPU. Nothing you write or say is
+          Lifelike speech, voice cloning and dictation that run entirely on your own computer. Nothing you write or say is
           ever uploaded.
         </p>
 
         <div style={i(3)} className="enter mt-10 flex flex-col items-center gap-3 sm:flex-row">
-          <a href={site.download} className="btn-fire !h-14 !px-7 !text-[16px]">
+          <a href={site.downloadWindows} className="btn-fire !h-14 !px-7 !text-[16px]">
             <WindowsIcon className="size-4" /> Download for Windows
+          </a>
+          <a
+            href={site.downloadLinux}
+            className="inline-flex h-14 items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] px-6 text-[16px] font-medium text-white backdrop-blur-md transition-colors hover:bg-white/[0.12]"
+          >
+            Download for Linux
           </a>
           <a
             href="#voices"
@@ -50,7 +56,7 @@ export function Hero() {
           </a>
         </div>
         <p style={i(4)} className="enter mt-5 text-[13px] text-white/45">
-          Windows installer · Runs on your GPU · Ready in about a minute
+          Windows and Linux · Runs on your GPU, or your processor without one · Ready in minutes
         </p>
       </div>
     </section>

@@ -8,7 +8,7 @@ export const faqs = [
   },
   {
     q: "What do I need to run it?",
-    a: "A Windows PC. FireVoice runs its voice models on your graphics card, so an NVIDIA GPU gives you the fastest results and lets you use the larger engines.",
+    a: "A Windows 10 or 11 PC, or a 64-bit Linux (Ubuntu 22.04 or newer and similar). An NVIDIA graphics card gives you the fastest results and the larger engines. Without one (an AMD or Intel card, or none), FireVoice runs on your processor with the engines that suit it, and tells you which those are.",
   },
   {
     q: "How long does setup take?",
