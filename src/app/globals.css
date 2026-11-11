@@ -1,26 +1,175 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------ tokens (from the app) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #f6f6f8;
+  --bg-elev: #fbfbfc;
+  --surface: #ffffff;
+  --surface-2: #f4f5f7;
+  --surface-3: #eceef3;
+  --ink: #0f1115;
+  --ink-2: #3a3f4b;
+  --muted: #5f6573;
+  --faint: #6c7280;
+  --line: rgba(17, 19, 24, 0.08);
+  --line-strong: rgba(17, 19, 24, 0.14);
+  --fire: #ff5a2d;
+  --fire-2: #ff8a4c;
+  --fire-ink: #c8380e;
+  --fire-soft: rgba(255, 90, 45, 0.1);
+  --ok: #17935f;
+  --glow: rgba(255, 106, 51, 0.22);
+  --shadow-lg: 0 40px 80px -40px rgba(17, 19, 24, 0.28), 0 12px 28px -14px rgba(17, 19, 24, 0.12);
+  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #07080b;
+  --bg-elev: #0c0d12;
+  --surface: #111319;
+  --surface-2: #171a21;
+  --surface-3: #1f232c;
+  --ink: #f3f4f7;
+  --ink-2: #cdd1db;
+  --muted: #9aa0ae;
+  --faint: #828899;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+  --fire: #ff6b3d;
+  --fire-2: #ff9c5e;
+  --fire-ink: #ff8a5c;
+  --fire-soft: rgba(255, 107, 61, 0.14);
+  --ok: #3dd08f;
+  --glow: rgba(255, 98, 41, 0.28);
+  --shadow-lg: 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 10px 26px -12px rgba(0, 0, 0, 0.6);
+  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Code", Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-bg-elev: var(--bg-elev);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fire: var(--fire);
+  --color-fire-2: var(--fire-2);
+  --color-fire-ink: var(--fire-ink);
+  --color-fire-soft: var(--fire-soft);
+  --color-ok: var(--ok);
+
+  --shadow-lg: var(--shadow-lg);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --animate-marquee: marquee 45s linear infinite;
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  --animate-blink: blink 1s steps(2, start) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -12px, 0) scale(1.03); }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}
+
+@layer base {
+  * { border-color: var(--line); }
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; overflow-x: clip; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    overflow-x: clip;
   }
+  ::selection { background: var(--fire-soft); color: var(--ink); }
+  :focus-visible { outline: 2px solid var(--fire); outline-offset: 3px; border-radius: 8px; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8; }
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-fire-ink;
+  }
+  .h-display {
+    @apply font-semibold tracking-[-0.045em] leading-[0.98] text-ink;
+    font-size: clamp(2.6rem, 7.2vw, 5.9rem);
+  }
+  .h-section {
+    @apply font-semibold tracking-[-0.035em] leading-[1.04] text-ink;
+    font-size: clamp(2rem, 4.6vw, 3.6rem);
+  }
+  .accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    background: linear-gradient(100deg, var(--fire-2), var(--fire) 55%, #ff3d6e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.08em;
+  }
+  .card {
+    @apply rounded-[22px] border border-line bg-surface;
+    box-shadow: var(--edge);
+  }
+  .fire-gradient { background: linear-gradient(135deg, #ff8a4c, #ff4d2e); }
+  .btn-fire {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-5 h-11 text-[15px] font-medium text-white transition-[transform,box-shadow] duration-300;
+    background: linear-gradient(135deg, #ff8a4c, #ff4d2e);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 10px 30px -10px rgba(255, 77, 46, 0.7);
+  }
+  .btn-fire:hover { transform: translateY(-1px); box-shadow: 0 1px 0 0 rgba(255,255,255,.35) inset, 0 16px 40px -12px rgba(255, 77, 46, 0.85); }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 h-11 text-[15px] font-medium text-ink border border-line-strong bg-surface/60 backdrop-blur transition-colors hover:bg-surface;
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+  /* hero entrance: plain CSS so it plays before hydration and never delays the largest paint */
+  .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+  .mask-fade-x { mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
