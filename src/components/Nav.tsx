@@ -8,6 +8,34 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Logo, WindowsIcon } from "./ui";
 import { nav, site } from "@/lib/site";
+import { armMusic, getServerSnapshot, getSnapshot, subscribe, toggleMusic } from "@/lib/audio-engine";
+
+/** Background music on/off. The score also starts on the visitor's first click or key press, unless they turned it off. */
+function SoundToggle() {
+  const s = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  useEffect(() => armMusic(), []);
+  const on = s.music;
+  return (
+    <button
+      type="button"
+      data-sound-toggle
+      onClick={toggleMusic}
+      aria-pressed={on}
+      className="flex h-9 items-center gap-2 rounded-full px-3 text-[13px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+    >
+      <span className="flex h-3.5 items-end gap-[2px]" aria-hidden>
+        {[0, 1, 2, 3].map((i) => (
+          <span
+            key={i}
+            className={`w-[2px] rounded-full bg-current ${on ? "animate-eq" : ""}`}
+            style={{ height: on ? undefined : [5, 9, 12, 7][i], animationDelay: `${i * 0.18}s`, opacity: on ? 1 : 0.6 }}
+          />
+        ))}
+      </span>
+      <span className="sr-only sm:not-sr-only">Sound</span>
+    </button>
+  );
+}
 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -43,10 +71,10 @@ export function Nav() {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header className="stage fixed inset-x-0 top-0 z-50">
       <div
         className={`transition-[background,border-color,backdrop-filter] duration-300 ${
-          scrolled || open ? "border-b border-line bg-bg/75 backdrop-blur-xl" : "border-b border-transparent"
+          scrolled || open ? "border-b border-white/10 bg-[#07070a]/70 backdrop-blur-xl" : "border-b border-transparent"
         }`}
       >
         <nav className="container-x flex h-16 items-center justify-between" aria-label="Main">
@@ -64,6 +92,7 @@ export function Nav() {
             ))}
           </ul>
           <div className="flex items-center gap-1.5">
+            <SoundToggle />
             <ThemeToggle />
             <a href={site.download} className="btn-fire hidden !h-9 !px-4 !text-sm sm:inline-flex">
               <WindowsIcon className="size-3.5" /> Download

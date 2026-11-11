@@ -9,9 +9,10 @@ export const site = {
 };
 
 export const nav = [
-  { href: "#features", label: "Features" },
   { href: "#voices", label: "Voices" },
+  { href: "#chapters", label: "Features" },
   { href: "#dictation", label: "Dictation" },
+  { href: "#engines", label: "Engines" },
   { href: "#developers", label: "Developers" },
   { href: "#faq", label: "FAQ" },
 ];

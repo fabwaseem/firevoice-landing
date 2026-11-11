@@ -4,6 +4,7 @@
 
 /* ------------------------------------------------------------ tokens (from the app) */
 :root {
+  --page-bg: var(--bg);
   color-scheme: light;
   --bg: #f6f6f8;
   --bg-elev: #fbfbfc;
@@ -28,6 +29,31 @@
 
 .dark {
   color-scheme: dark;
+  --bg: #07080b;
+  --bg-elev: #0c0d12;
+  --surface: #111319;
+  --surface-2: #171a21;
+  --surface-3: #1f232c;
+  --ink: #f3f4f7;
+  --ink-2: #cdd1db;
+  --muted: #9aa0ae;
+  --faint: #828899;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+  --fire: #ff6b3d;
+  --fire-2: #ff9c5e;
+  --fire-ink: #ff8a5c;
+  --fire-soft: rgba(255, 107, 61, 0.14);
+  --ok: #3dd08f;
+  --glow: rgba(255, 98, 41, 0.28);
+  --shadow-lg: 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 10px 26px -12px rgba(0, 0, 0, 0.6);
+  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* "stages" (hero, manifesto, finale, demo panels) are always dark, whatever the theme */
+.stage {
+  color-scheme: dark;
+  color: var(--ink);
   --bg: #07080b;
   --bg-elev: #0c0d12;
   --surface: #111319;
@@ -78,6 +104,7 @@
   --animate-float: float 9s ease-in-out infinite;
   --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
   --animate-blink: blink 1s steps(2, start) infinite;
+  --animate-eq: eq 0.9s ease-in-out infinite alternate;
 }
 
 @keyframes marquee {
@@ -95,13 +122,26 @@
   from { opacity: 0; transform: translate3d(0, 16px, 0); }
   to { opacity: 1; transform: none; }
 }
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-2%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes eq {
+  0% { height: 3px; }
+  100% { height: 14px; }
+}
 @keyframes blink {
   to { visibility: hidden; }
 }
 
 @layer base {
   * { border-color: var(--line); }
-  html { scroll-behavior: smooth; scroll-padding-top: 5rem; overflow-x: clip; }
+  html { scroll-padding-top: 5rem; overflow-x: clip; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
   body {
     background: var(--bg);
     color: var(--ink);
@@ -123,6 +163,12 @@
   .h-display {
     @apply font-semibold tracking-[-0.045em] leading-[0.98] text-ink;
     font-size: clamp(2.6rem, 7.2vw, 5.9rem);
+  }
+  .h-hero {
+    @apply font-semibold text-white;
+    font-size: clamp(3rem, 8.6vw, 8.4rem);
+    line-height: 0.93;
+    letter-spacing: -0.055em;
   }
   .h-section {
     @apply font-semibold tracking-[-0.035em] leading-[1.04] text-ink;
@@ -159,6 +205,16 @@
       linear-gradient(to bottom, var(--line) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+  /* film grain over the whole page */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 1.2s steps(6) infinite;
   }
   /* hero entrance: plain CSS so it plays before hydration and never delays the largest paint */
   .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }

@@ -2,7 +2,8 @@
 
 The marketing site for FireVoice, the desktop app that makes natural voices on your own computer.
 
-Next.js 16 (App Router, TypeScript), Tailwind CSS 4, Three.js through React Three Fiber and drei, and Motion.
+Next.js 16 (App Router, TypeScript), Tailwind CSS 4, Three.js through React Three Fiber, GSAP ScrollTrigger + Lenis,
+and Motion. The design direction is written down in [`docs/DESIGN.md`](docs/DESIGN.md).
 
 ```bash
 pnpm install
@@ -12,35 +13,35 @@ pnpm build && pnpm start
 
 Set `NEXT_PUBLIC_SITE_URL` to the real domain before deploying, so canonical links, Open Graph and the sitemap use it.
 
-## How it is put together
+## What makes it move
 
-| where                                 | what                                                                                   |
-|---------------------------------------|----------------------------------------------------------------------------------------|
-| `src/app/page.tsx`                    | the page: sections in order, plus FAQ structured data                                  |
-| `src/app/layout.tsx`                  | fonts, metadata, theme provider (light, dark, follows the system), app structured data |
-| `src/app/opengraph-image.tsx`         | the 1200x630 share image, generated at build time                                      |
-| `src/components/sections/*`           | one file per section                                                                   |
-| `src/components/three/OrbScene.tsx`   | the 3D hero: a shader orb, a waveform ring, orbiting dots                              |
-| `src/components/three/HeroVisual.tsx` | decides if and when the 3D loads, and shows a CSS orb before and instead of it         |
-| `src/lib/voice-level.ts`              | one shared "voice level" that drives the orb and every live waveform                   |
-| `src/lib/site.ts`                     | name, URLs (download link), navigation                                                 |
+- **The voice field** (`src/components/three/VoiceField.tsx`): ~100k glowing particles forming a 3D waveform landscape
+  behind the whole page. A fixed backdrop: "stage" sections (`data-stage`: hero, manifesto, finale, footer) are
+  transparent windows onto it; the content band in between is opaque and melts into it with long gradients.
+- **One audio engine** (`src/lib/audio-engine.ts`): plays the real FireVoice renders, runs the background score, and
+  analyses both into 32 frequency bands that drive the field and every live waveform. Music ducks under a voice clip.
+- **The background score** (`src/lib/music.ts`): an original generative ambient piece composed live with Web Audio
+  (pads, heartbeat pulse, bass, bell arpeggios, reverb). No audio files, nothing to license. It starts on the
+  visitor's first click or key press; the "Sound" toggle in the nav turns it off, and that choice is remembered.
+- **Real renders**: `public/audio/*.mp3` were rendered by FireVoice itself (flagship engine, designed synthetic
+  voices); `src/data/clips.json` holds their waveform peaks and word timings (from FireVoice's own transcription).
+  Avatars in `public/avatars` come from the app's voice library.
 
-### The 3D, and when it is skipped
+### When the 3D is skipped or deferred
 
-- The 3D code is its own chunk and is never part of the first load.
-- Desktops load it when the browser is idle. Phones and tablets load it on the first touch, scroll or key press.
-- It is skipped entirely (the CSS orb stays) when the visitor prefers reduced motion, has data saver on, has fewer
-  than 4 CPU cores or less than 4 GB of memory, or the browser has no WebGL.
-- It stops drawing frames while the hero is off screen, and lowers its resolution if the frame rate drops.
-- "Talk to the orb" lets the orb react to the visitor's microphone. The audio is analysed in the tab only; nothing is
-  recorded or sent.
+- Its code is a separate chunk. Desktops load it when the browser is idle; phones and tablets on the first touch,
+  scroll or key press. Particle count is lower on phones and smaller CPUs.
+- Skipped (a still SVG wave and glow remain) for reduced motion, data saver, fewer than 4 CPU cores or under 4 GB of
+  memory, or no WebGL 2. Frames stop whenever no stage section is on screen.
+- Reduced motion also turns off smooth scrolling, the scrubbed manifesto and the entrance animations.
 
 ### Engine names
 
-The site never names the underlying open-source models. It uses FireVoice's own engine names (Ember, Blaze, Flint,
-Cinder, Kindle, Hearth, Spark, Forge, Pyre) in `src/components/sections/Engines.tsx` and the product mockup.
+The site never names the underlying open-source models. It uses the app's own engine brands (Inferno, Torch,
+Beacon, Forge, Hearth, Firebrand, Firestorm, Candle, Magma, Smoulder, Flare, Flicker, Spark, Phoenix, Flash) from
+`src/data/engines.json`.
 
 ## Checked
 
-Lighthouse (production build, local): mobile 90 performance, 100 accessibility, 100 best practices, 100 SEO;
-desktop 97 / 100 / 100 / 100. Screenshots are in `docs/screenshots/`.
+Lighthouse (production build, local): desktop 100 performance / 100 accessibility / 100 best practices / 100 SEO;
+mobile 89 / 100 / 100 / 100. Screenshots are in `docs/screenshots/`.

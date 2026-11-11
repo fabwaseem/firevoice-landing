@@ -6,7 +6,6 @@ import { Check } from "lucide-react";
 import { LiveBars } from "../LiveBars";
 import { Reveal } from "../Reveal";
 import { SectionHeader } from "../ui";
-import { playDemo } from "@/lib/voice-level";
 
 const SENTENCE =
   "Hi Sam, thanks for the notes. I moved the launch to Thursday so the team has time to test the installer. Talk soon!";
@@ -25,7 +24,7 @@ function Key({ children, down }: { children: React.ReactNode; down: boolean }) {
   );
 }
 
-function Demo() {
+export function DictationDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: "-20% 0px" });
   const reduce = useReducedMotion();
@@ -40,7 +39,6 @@ function Demo() {
       if (cancelled) return;
       setTyped(0);
       setPhase("listening");
-      playDemo(2.6);
       timers.push(
         setTimeout(() => {
           setPhase("typing");
@@ -152,7 +150,7 @@ export function Dictation() {
           </ul>
         </div>
         <Reveal>
-          <Demo />
+          <DictationDemo />
         </Reveal>
       </div>
     </section>

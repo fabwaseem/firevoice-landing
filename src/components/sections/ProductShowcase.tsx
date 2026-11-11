@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import {
   AudioLines,
@@ -15,11 +16,10 @@ import {
   Pause,
   Play,
   ScrollText,
-  Sparkles,
 } from "lucide-react";
-import { LiveBars } from "../LiveBars";
+import { Captions } from "../Captions";
 import { Bars, Logo } from "../ui";
-import { playDemo } from "@/lib/voice-level";
+import { clips, currentTime, getServerSnapshot, getSnapshot, onFrame, play, subscribe, type Clip } from "@/lib/audio-engine";
 
 const sidebar = [
   { icon: Home, label: "Home" },
@@ -33,37 +33,71 @@ const sidebar = [
   { icon: BookOpen, label: "Projects" },
 ];
 
-const styles = ["Conversational", "Storyteller", "Documentary", "Calm", "Excited", "Trailer"];
-
-const recent = [
-  { title: "Chapter 3: The lighthouse", voice: "Mara", len: "4:12" },
-  { title: "Product intro, take 2", voice: "Theo", len: "0:38" },
-  { title: "Bedtime story", voice: "June", len: "6:05" },
+/* each delivery style in the mockup plays the matching real render */
+const styleClips: { label: string; slug: string }[] = [
+  { label: "Documentary", slug: "documentary" },
+  { label: "Trailer", slug: "trailer" },
+  { label: "Bedtime", slug: "bedtime" },
+  { label: "Dramatic", slug: "villain" },
+  { label: "Excited", slug: "radio" },
+  { label: "Whisper", slug: "whisper" },
+  { label: "Deadpan", slug: "deadpan" },
+  { label: "Sports", slug: "sports" },
 ];
+const bySlug = Object.fromEntries(clips.map((c) => [c.slug, c])) as Record<string, Clip>;
 
-/** A faithful, interactive stand-in for the app's Speak screen. */
+function Progress({ clip, on }: { clip: Clip; on: boolean }) {
+  const fill = useRef<HTMLDivElement>(null);
+  const time = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!on) {
+      if (fill.current) fill.current.style.clipPath = "inset(0 100% 0 0)";
+      if (time.current) time.current.textContent = `0:${String(Math.round(clip.duration)).padStart(2, "0")}`;
+      return;
+    }
+    return onFrame(() => {
+      const t = currentTime();
+      const p = Math.min(1, t / clip.duration);
+      if (fill.current) fill.current.style.clipPath = `inset(0 ${(100 - p * 100).toFixed(2)}% 0 0)`;
+      if (time.current) time.current.textContent = `0:${String(Math.floor(t)).padStart(2, "0")}`;
+    });
+  }, [on, clip]);
+  const bars = (cls: string) => (
+    <div className={`flex h-full items-center gap-[2px] ${cls}`}>
+      {clip.peaks.map((v, i) => (
+        <span key={i} className="w-full rounded-full bg-current" style={{ height: `${Math.max(10, Math.round(v * 100))}%` }} />
+      ))}
+    </div>
+  );
+  return (
+    <>
+      <div className="relative h-9 flex-1">
+        {bars("text-ink/15")}
+        <div ref={fill} className="absolute inset-0" style={{ clipPath: "inset(0 100% 0 0)" }}>
+          {bars("text-fire")}
+        </div>
+      </div>
+      <span ref={time} className="w-10 shrink-0 text-right font-mono text-[12px] text-muted">
+        0:{String(Math.round(clip.duration)).padStart(2, "0")}
+      </span>
+    </>
+  );
+}
+
+/** A faithful stand-in for the app's Speak screen, playing real FireVoice renders. */
 export function AppWindow() {
-  const [style, setStyle] = useState("Storyteller");
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [slug, setSlug] = useState("documentary");
+  const s = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const clip = bySlug[slug];
+  const on = s.playing && s.clip?.slug === slug;
 
-  const render = () => {
-    if (playing) return;
-    setPlaying(true);
-    playDemo(4.2);
-    const start = performance.now();
-    const step = () => {
-      const p = Math.min(1, (performance.now() - start) / 4200);
-      setProgress(p);
-      if (p < 1) requestAnimationFrame(step);
-      else setTimeout(() => (setPlaying(false), setProgress(0)), 400);
-    };
-    requestAnimationFrame(step);
+  const choose = (next: string) => {
+    setSlug(next);
+    play(bySlug[next]);
   };
 
   return (
     <div className="overflow-hidden rounded-[18px] border border-line-strong bg-bg-elev shadow-lg sm:rounded-[22px]">
-      {/* title bar */}
       <div className="flex h-10 items-center justify-between border-b border-line bg-surface-2/70 px-4">
         <div className="flex items-center gap-2">
           <Logo size={16} />
@@ -76,8 +110,7 @@ export function AppWindow() {
         </div>
       </div>
 
-      <div className="grid min-h-[420px] grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[210px_1fr_260px]">
-        {/* sidebar */}
+      <div className="grid min-h-[440px] grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[210px_1fr_250px]">
         <aside className="hidden border-r border-line bg-surface-2/40 p-3 md:block">
           <ul className="space-y-0.5">
             {sidebar.map(({ icon: Icon, label, active }) => (
@@ -93,92 +126,80 @@ export function AppWindow() {
             ))}
           </ul>
           <div className="mt-6 rounded-xl border border-line bg-surface p-3">
-            <p className="text-[11px] text-faint">Engine</p>
-            <p className="mt-0.5 text-[13px] font-medium text-ink">Ember · on GPU</p>
+            <p className="text-[11px] text-muted">Engine</p>
+            <p className="mt-0.5 text-[13px] font-medium text-ink">Inferno · on GPU</p>
             <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-3">
-              <div className="h-full w-[38%] rounded-full fire-gradient" />
+              <div className="h-full w-[52%] rounded-full fire-gradient" />
             </div>
-            <p className="mt-1.5 text-[11px] text-faint">VRAM 3.1 GB</p>
+            <p className="mt-1.5 text-[11px] text-muted">48 kHz · 30 languages</p>
           </div>
         </aside>
 
-        {/* main */}
-        <div className="flex flex-col p-4 sm:p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <button className="flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 text-[13px]" tabIndex={-1}>
-              <span className="grid size-6 place-items-center rounded-full bg-[linear-gradient(135deg,#ffb38a,#ff5a2d)] text-[11px] font-semibold text-white">
-                M
-              </span>
-              Mara · warm narrator
-              <ChevronDown className="size-3.5 text-faint" />
-            </button>
-            <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Delivery style">
-              {styles.map((s) => (
-                <button
-                  key={s}
-                  role="radio"
-                  aria-checked={style === s}
-                  onClick={() => setStyle(s)}
-                  className={`rounded-full px-2.5 py-1 text-[12px] transition-colors ${
-                    style === s ? "bg-fire-soft text-fire-ink ring-1 ring-fire/30" : "text-muted hover:bg-surface-2"
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+        <div className="flex min-w-0 flex-col p-4 sm:p-6">
+          <div className="flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 text-[13px] text-ink self-start">
+            <Image src={`/avatars/${clip.voice}.webp`} alt="" width={26} height={26} className="rounded-full" />
+            {clip.name} · {clip.role.toLowerCase()}
+            <ChevronDown className="size-3.5 text-muted" />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Delivery style (plays a real render)">
+            {styleClips.map((c) => (
+              <button
+                key={c.slug}
+                role="radio"
+                aria-checked={slug === c.slug}
+                onClick={() => choose(c.slug)}
+                className={`rounded-full px-2.5 py-1 text-[12px] transition-colors ${
+                  slug === c.slug ? "bg-fire-soft text-fire-ink ring-1 ring-fire/30" : "text-muted hover:bg-surface-2 hover:text-ink"
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
           </div>
 
-          <div className="mt-4 flex-1 rounded-2xl border border-line bg-surface p-4 text-left text-[15px] leading-relaxed text-ink-2 sm:p-5 sm:text-base">
-            The storm came in low over the harbour. <span className="rounded bg-fire-soft px-1 font-mono text-[12px] text-fire-ink">[pause 400ms]</span>{" "}
-            Mara pulled her coat tighter, counted the lights along the pier, and smiled. One of them was still burning
-            <span className="ml-0.5 inline-block h-5 w-px translate-y-1 animate-blink bg-fire" aria-hidden />
+          <div className="mt-4 flex-1 rounded-2xl border border-line bg-surface p-4 text-left sm:p-5">
+            {on ? (
+              <Captions
+                clip={clip}
+                playing={on}
+                className="text-[17px] leading-relaxed text-ink [&_[data-w]]:!blur-0 [&_[data-w]]:!translate-y-0 [&_[data-w]]:opacity-30"
+              />
+            ) : (
+              <p className="text-[17px] leading-relaxed text-ink-2">
+                {clip.text}
+                <span className="ml-0.5 inline-block h-5 w-px translate-y-1 animate-blink bg-fire" aria-hidden />
+              </p>
+            )}
           </div>
 
           <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-surface p-2.5 pl-3">
             <button
-              onClick={render}
+              onClick={() => play(clip)}
               className="grid size-10 shrink-0 place-items-center rounded-full fire-gradient text-white shadow-[0_8px_20px_-8px_rgba(255,77,46,.8)]"
-              aria-label={playing ? "Rendering demo" : "Play a demo render"}
+              aria-label={on ? `Pause ${clip.name}` : `Play ${clip.name}`}
             >
-              {playing ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4" />}
+              {on ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4 fill-current" />}
             </button>
-            <div className="relative h-9 flex-1 overflow-hidden text-fire">
-              <LiveBars n={48} className="h-full w-full justify-between" gain={playing ? 1.4 : 0.9} />
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 bg-surface/70"
-                style={{ width: `${100 - progress * 100}%`, display: playing ? "block" : "none" }}
-              />
-            </div>
-            <span className="w-12 shrink-0 text-right font-mono text-[12px] text-faint">
-              0:{String(Math.round(progress * 9)).padStart(2, "0")}
-            </span>
+            <Progress clip={clip} on={on} />
           </div>
         </div>
 
-        {/* right column */}
         <aside className="hidden border-l border-line p-4 lg:block">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-faint">Recent renders</p>
+          <p className="text-[11px] font-medium uppercase tracking-wider text-muted">Recent renders</p>
           <ul className="mt-3 space-y-2">
-            {recent.map((r, i) => (
-              <li key={r.title} className="rounded-xl border border-line bg-surface p-3">
-                <p className="truncate text-[13px] font-medium text-ink">{r.title}</p>
-                <div className="mt-2 flex items-center gap-2 text-fire/80">
-                  <Play className="size-3 shrink-0 text-muted" />
-                  <Bars
-                    className="h-4 w-full flex-1"
-                    heights={Array.from({ length: 30 }, (_, j) => 0.25 + Math.abs(Math.sin(j * 1.1 + i * 2)) * 0.75)}
-                  />
-                  <span className="font-mono text-[11px] text-faint">{r.len}</span>
+            {clips.slice(2, 5).map((r) => (
+              <li key={r.slug} className="rounded-xl border border-line bg-surface p-3">
+                <div className="flex items-center gap-2">
+                  <Image src={`/avatars/${r.voice}.webp`} alt="" width={22} height={22} className="rounded-full" />
+                  <p className="truncate text-[13px] font-medium text-ink">{r.role}</p>
                 </div>
-                <p className="mt-1.5 text-[11px] text-faint">{r.voice}</p>
+                <Bars heights={r.peaks.filter((_, i) => i % 3 === 0)} className="mt-2 h-4 text-fire/70" />
+                <p className="mt-1.5 text-[11px] text-muted">
+                  {r.name} · 0:{String(Math.round(r.duration)).padStart(2, "0")}
+                </p>
               </li>
             ))}
           </ul>
-          <div className="mt-4 rounded-xl border border-dashed border-line-strong p-3 text-[12px] text-muted">
-            <Sparkles className="mb-1 size-4 text-fire" />
-            21 delivery styles, from calm to trailer voice.
-          </div>
         </aside>
       </div>
     </div>
@@ -189,17 +210,33 @@ export function ProductShowcase() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
-  const rotateX = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 22, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0.9, 1]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 32, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0.86, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : 80, 0]);
+  const beam = useTransform(scrollYProgress, [0.2, 1], [0, 1]);
 
   return (
-    <section aria-label="The FireVoice app" className="relative overflow-x-clip pb-8 pt-10 sm:pt-16">
-      <div className="container-x [perspective:1400px]">
-        <motion.div ref={ref} style={{ rotateX, scale, transformOrigin: "50% 0%" }} className="relative">
-          <div aria-hidden className="absolute -inset-x-10 -top-10 bottom-1/3 -z-10 rounded-full bg-[radial-gradient(closest-side,var(--glow),transparent)] blur-3xl" />
-          <AppWindow />
-        </motion.div>
-        <p className="mt-4 text-center text-[13px] text-faint">The Speak screen. Press play to watch a render, or pick a delivery style.</p>
+    <section aria-labelledby="app-title" className="relative overflow-x-clip bg-bg pb-24 pt-28 sm:pt-36">
+      <div className="container-x">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="eyebrow">The app</p>
+          <h2 id="app-title" className="h-section mt-4 text-balance">
+            Write a line. <span className="accent">Pick a voice.</span> Press play.
+          </h2>
+          <p className="mt-5 text-pretty text-lg text-muted">
+            This is FireVoice&apos;s Speak screen, and these are real renders. Tap a delivery style to hear it.
+          </p>
+        </div>
+        <div className="relative mt-16 [perspective:1600px]">
+          <motion.div
+            aria-hidden
+            style={{ opacity: beam }}
+            className="pointer-events-none absolute -top-24 left-1/2 h-[140%] w-[70%] -translate-x-1/2 bg-[radial-gradient(50%_45%_at_50%_30%,rgba(255,98,41,0.35),transparent_70%)] blur-2xl"
+          />
+          <motion.div ref={ref} style={{ rotateX, scale, y, transformOrigin: "50% 0%" }} className="relative">
+            <AppWindow />
+          </motion.div>
+        </div>
       </div>
     </section>
   );

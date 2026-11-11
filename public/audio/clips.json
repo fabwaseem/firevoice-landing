@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "trailer",
+    "voice": "dsg-trailer-voice",
+    "style": "trailer",
+    "text": "In a world where every voice lives in someone else's cloud... one app keeps yours exactly where it belongs."
+  },
+  {
+    "slug": "documentary",
+    "voice": "dsg-documentary-m",
+    "style": "documentary",
+    "text": "Here, in the quiet of your own computer, a brand new voice takes its very first breath."
+  },
+  {
+    "slug": "bedtime",
+    "voice": "dsg-grandma",
+    "style": "bedtime",
+    "text": "Once upon a time, a little computer learned to tell stories. And it never told a soul."
+  },
+  {
+    "slug": "villain",
+    "voice": "dsg-villain-m",
+    "style": "dramatic",
+    "text": "You want my voice? Then you'll have to come and take it... from my hard drive."
+  },
+  {
+    "slug": "radio",
+    "voice": "dsg-radio-dj-f",
+    "style": "excited",
+    "text": "Good morning! It's seven a.m., you're tuned in to FireVoice, and nothing you say ever leaves this room!"
+  },
+  {
+    "slug": "whisper",
+    "voice": "dsg-ghost-whisper-f",
+    "style": "asmr",
+    "text": "Shh... nobody is listening. Not even the cloud."
+  },
+  {
+    "slug": "deadpan",
+    "voice": "dsg-deadpan-m",
+    "style": "deadpan",
+    "text": "Oh great. Another app that works offline, costs nothing per word, and sounds human. I'm thrilled."
+  },
+  {
+    "slug": "sports",
+    "voice": "dsg-sports-caster",
+    "style": "sports",
+    "text": "And she writes the whole email without touching the keyboard! Unbelievable! What a dictation!"
+  }
+]

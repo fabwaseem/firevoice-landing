@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { subscribeFrame } from "@/lib/voice-level";
+import { getLevel, onFrame } from "@/lib/audio-engine";
 
 /** Audio bars that move with the shared voice level. Static when the visitor prefers reduced motion. */
 export function LiveBars({ n = 28, className = "", gain = 1 }: { n?: number; className?: string; gain?: number }) {
@@ -13,7 +13,8 @@ export function LiveBars({ n = 28, className = "", gain = 1 }: { n?: number; cla
     let visible = true;
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
     io.observe(el);
-    const off = subscribeFrame((level, t) => {
+    const off = onFrame((t) => {
+      const level = getLevel();
       if (!visible) return;
       for (let i = 0; i < bars.length; i++) {
         const w = 0.5 + 0.5 * Math.sin(i * 0.9 + t * 7) * Math.sin(i * 0.37 - t * 3.1);
