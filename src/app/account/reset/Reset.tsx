@@ -34,7 +34,7 @@ export function Reset() {
     return (
       <div>
         <h1 className="text-[30px] font-semibold tracking-tight">This link does not work</h1>
-        <p className="mt-3 text-[15.5px] text-ink-2">In FireVoice, open Account, choose Forgot password, and use the newest email.</p>
+        <p className="mt-3 text-[15.5px] text-ink-2">Ask for a new link on the sign-in page (Forgot?), and use the newest email.</p>
       </div>
     );
 
@@ -42,7 +42,7 @@ export function Reset() {
     return (
       <div role="status">
         <h1 className="text-[30px] font-semibold tracking-tight">Your password is changed</h1>
-        <p className="mt-3 text-[15.5px] text-ink-2">You were signed out everywhere. Sign in again in FireVoice with the new password.</p>
+        <p className="mt-3 text-[15.5px] text-ink-2">You were signed out everywhere. Sign in again with the new password.</p>
       </div>
     );
 

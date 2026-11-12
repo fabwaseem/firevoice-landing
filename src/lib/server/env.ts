@@ -12,6 +12,9 @@ const Schema = z.object({
     .optional()
     .transform((v) => v === "true" || v === "1"),
   SMTP_URL: z.string().optional(),
+  // Sign in with Google (optional: without both, the button is not shown)
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
   MAIL_FROM: z.string().default("FireVoice <hello@firevoice.fabwaseem.com>"),
   NEXT_PUBLIC_SITE_URL: z.string().default("https://firevoice.fabwaseem.com"),
 });

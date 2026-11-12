@@ -3,15 +3,20 @@ import { cookies } from "next/headers";
 import type { Install, User } from "@/generated/prisma/client";
 import { db } from "./db";
 import { env } from "./env";
-import { sign, unsign, sha256, safeEqual } from "./crypto";
+import { randomToken, sign, unsign, sha256, safeEqual } from "./crypto";
 import { bearer, HttpError } from "./http";
 
 // Three kinds of caller:
 //   an install of the desktop app:  "Authorization: Bearer <install token>" plus, when signed in,
-//                                   "X-FireVoice-Session: <session token>"
+//                                   "X-FireVoice-Session: <session token>" (signed in through the browser)
+//   a person on the website:         the same kind of session token, in an httpOnly cookie
 //   the admin:                       a signed, short-lived cookie (ADMIN_PASSWORD at /admin)
 
 export const SESSION_DAYS = 90;
+export const WEB_SESSION_DAYS = 30;
+const PROD = process.env.NODE_ENV === "production";
+// __Host-: only over HTTPS, only this exact host, path "/" (no subdomain can set or read it)
+export const WEB_COOKIE = PROD ? "__Host-fv_session" : "fv_session";
 export const ADMIN_COOKIE = "fv_admin";
 const ADMIN_HOURS = 12;
 
@@ -47,9 +52,46 @@ async function sessionFrom(token: string | null | undefined): Promise<SignedIn |
   return { user: s.user, sessionId: s.id };
 }
 
-/** The signed-in person, from the app's session header. */
-export function currentUser(req: Request): Promise<SignedIn | null> {
-  return sessionFrom(req.headers.get("x-firevoice-session"));
+/** The signed-in person: the app's session header, or the site's cookie. A cookie-signed request that changes
+ * something must come from this site's own pages (the cookie is SameSite=Lax too). */
+export async function currentUser(req: Request): Promise<SignedIn | null> {
+  const header = req.headers.get("x-firevoice-session");
+  if (header) return sessionFrom(header);
+  const cookie = (await cookies()).get(WEB_COOKIE)?.value;
+  if (!cookie) return null;
+  if (req.method !== "GET" && req.method !== "HEAD") sameOrigin(req);
+  return sessionFrom(cookie);
+}
+
+/** Signs a person in on this browser: a new web session, its token only in the httpOnly cookie. */
+export async function startWebSession(userId: string, c: { ip: string | null; country: string | null; city: string | null; userAgent: string | null }) {
+  const token = randomToken();
+  await db().$transaction([
+    db().session.create({
+      data: {
+        tokenHash: sha256(token),
+        userId,
+        kind: "web",
+        ip: c.ip,
+        country: c.country,
+        city: c.city,
+        userAgent: c.userAgent,
+        expiresAt: new Date(Date.now() + WEB_SESSION_DAYS * 86_400_000),
+      },
+    }),
+    db().user.update({ where: { id: userId }, data: { lastSeenAt: new Date() } }),
+  ]);
+  (await cookies()).set(WEB_COOKIE, token, {
+    httpOnly: true,
+    secure: PROD,
+    sameSite: "lax", // lax, not strict: coming back from Google's sign-in is a cross-site navigation
+    path: "/",
+    maxAge: WEB_SESSION_DAYS * 86_400,
+  });
+}
+
+export async function endWebSession() {
+  (await cookies()).delete(WEB_COOKIE);
 }
 
 export async function requireUser(req: Request): Promise<SignedIn> {
@@ -63,7 +105,10 @@ export const publicUser = (u: User) => ({
   id: u.id,
   email: u.email,
   name: u.name,
+  avatarUrl: u.avatarUrl,
   verified: !!u.emailVerifiedAt,
+  hasPassword: !!u.passwordHash,
+  google: !!u.googleId,
   createdAt: u.createdAt,
 });
 
@@ -77,7 +122,7 @@ export async function startAdminSession() {
   const until = Date.now() + ADMIN_HOURS * 3_600_000;
   (await cookies()).set(ADMIN_COOKIE, sign(`admin:${until}`, env().AUTH_SECRET), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: PROD,
     sameSite: "strict",
     path: "/",
     maxAge: ADMIN_HOURS * 3600,

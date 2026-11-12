@@ -45,6 +45,10 @@ export const LIMITS = {
   mail: [5, 3_600_000], // forgot password / resend verification, per IP and per email
   admin: [8, 900_000], // admin sign-in attempts
   read: [240, 60_000], // reads by a signed-in app
+  applogin: [20, 3_600_000], // the app asking to sign in through the browser
+  poll: [60, 60_000], // the app checking whether it was approved (per request)
+  approve: [30, 900_000], // looking up or approving codes in the browser (per person)
+  oauth: [30, 900_000], // Google sign-in starts and returns
 } as const satisfies Record<string, readonly [number, number]>;
 
 export type LimitName = keyof typeof LIMITS;

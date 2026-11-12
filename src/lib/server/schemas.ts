@@ -101,5 +101,10 @@ export const UpdateMe = z.object({
   currentPassword: z.string().max(200).optional(),
   newPassword: Password.optional(),
 });
-export const DeleteMe = z.object({ password: z.string().min(1).max(200) });
+/** Deleting the account: the password, or (an account made with Google, without one) the email typed out. */
+export const DeleteMe = z.object({ password: z.string().max(200).optional(), confirmEmail: z.string().trim().toLowerCase().max(254).optional() });
+export const AppLoginStart = z.object({ device: z.string().trim().max(120).optional().nullable() });
+export const AppLoginPoll = z.object({ pollToken: z.string().min(20).max(200) });
+export const AppLoginCode = z.object({ code: z.string().trim().toUpperCase().regex(/^[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}$/, "not a code") });
+export const AppLoginDecide = AppLoginCode.extend({ approve: z.boolean() });
 export const ActivateBody = z.object({ key: z.string().trim().toUpperCase().regex(/^FV(-[2-9A-HJ-NP-Z]{5}){4}$/, "not a licence key") });

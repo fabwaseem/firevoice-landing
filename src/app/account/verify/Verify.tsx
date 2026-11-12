@@ -28,8 +28,8 @@ export function Verify() {
         {state === "working"
           ? "One moment."
           : state === "done"
-            ? "You are all set. You can close this page and go back to FireVoice."
-            : "It may have expired or already been used. In FireVoice, open Account and choose Resend email."}
+            ? "You are all set. You can close this page."
+            : "It may have expired or already been used. Ask for a new one on your account page."}
       </p>
     </div>
   );

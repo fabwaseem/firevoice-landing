@@ -50,7 +50,9 @@ model User {
   id              String    @id @default(cuid())
   email           String    @unique // lower-cased
   name            String?
-  passwordHash    String
+  passwordHash    String? // null for accounts made with Google
+  googleId        String?   @unique
+  avatarUrl       String?
   role            Role      @default(USER)
   emailVerifiedAt DateTime?
   disabledAt      DateTime?
@@ -63,6 +65,7 @@ model User {
 
   sessions    Session[]
   emailTokens EmailToken[]
+  appLogins   AppLogin[]
   installs    Install[]
   licenses    License[]
   feedback    Feedback[]
@@ -77,6 +80,7 @@ model Session {
   tokenHash  String    @unique
   userId     String
   installId  String?
+  kind       String    @default("app") // app (the desktop app) or web (a browser, by cookie)
   ip         String?
   country    String?
   city       String?
@@ -147,6 +151,7 @@ model Install {
   daily       DailyActive[]
   crashes     Crash[]
   sessions    Session[]
+  appLogins   AppLogin[]
   feedback    Feedback[]
   activations Activation[]
 
@@ -294,4 +299,34 @@ model AuditLog {
   at     DateTime @default(now())
 
   @@index([at])
+}
+
+enum AppLoginStatus {
+  PENDING
+  APPROVED
+  DENIED
+  USED
+}
+
+/// Signing the desktop app in through the browser: the app asks for a code, opens the site with it, the person signs in
+/// there and approves; the app (which alone holds the poll secret) then collects its session. Ten minutes, one use.
+model AppLogin {
+  id         String         @id @default(cuid())
+  codeHash   String         @unique // the code shown in the browser
+  pollHash   String         @unique // the secret only the app has
+  status     AppLoginStatus @default(PENDING)
+  installId  String?
+  userId     String?
+  device     String?
+  ip         String?
+  country    String?
+  city       String?
+  createdAt  DateTime       @default(now())
+  expiresAt  DateTime
+  approvedAt DateTime?
+
+  install Install? @relation(fields: [installId], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
 }

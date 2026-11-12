@@ -1,18 +1,18 @@
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/server/db";
-import { optionalInstall, publicUser } from "@/lib/server/auth";
-import { createSession, mailToken } from "@/lib/server/accounts";
+import { publicUser, sameOrigin, startWebSession } from "@/lib/server/auth";
+import { mailToken } from "@/lib/server/accounts";
 import { hashPassword } from "@/lib/server/crypto";
 import { body, HttpError, json, rateLimit, route } from "@/lib/server/http";
 import { client } from "@/lib/server/request";
 import { Signup } from "@/lib/server/schemas";
 
-/** A new account, signed in on this install straight away; a confirmation email goes out. */
+/** A new account, made on the website (signed in on this browser straight away); a confirmation email goes out. */
 export const POST = route(async (req) => {
+  sameOrigin(req);
   const c = client(req);
   rateLimit("signup", c.ip);
   const b = await body(req, Signup, 8 * 1024);
-  const install = await optionalInstall(req);
   let user;
   try {
     user = await db().user.create({
@@ -30,7 +30,7 @@ export const POST = route(async (req) => {
       throw new HttpError(409, "email_taken", "There is already an account with this email. Sign in instead.");
     throw e;
   }
-  const token = await createSession(user.id, install?.id ?? null, c);
+  await startWebSession(user.id, c);
   await mailToken(user.id, user.email, "VERIFY");
-  return json({ token, user: publicUser(user) }, { status: 201 });
+  return json({ user: publicUser(user) }, { status: 201 });
 });
