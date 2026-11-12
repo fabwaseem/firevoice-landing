@@ -1,47 +1,36 @@
-# FireVoice landing page
+# FireVoice site and cloud
 
-The marketing site for FireVoice, the desktop app that makes natural voices on your own computer.
+The website for FireVoice (firevoice.fabwaseem.com) and the small backend the desktop app talks to.
 
-Next.js 16 (App Router, TypeScript), Tailwind CSS 4, Three.js through React Three Fiber, GSAP ScrollTrigger + Lenis,
-and Motion. The design direction is written down in [`docs/DESIGN.md`](docs/DESIGN.md).
+Next.js 16 (App Router, TypeScript), Tailwind CSS 4, GSAP ScrollTrigger + Lenis for the scroll scenes, Prisma 7 on
+Postgres.
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
-pnpm build && pnpm start
+pnpm dev                       # http://localhost:3000
+pnpm db:migrate                # apply schema changes in development
+node scripts/api-check.mjs http://localhost:3000 <admin password>   # walks the whole API
 ```
 
-Set `NEXT_PUBLIC_SITE_URL` to the real domain before deploying, so canonical links, Open Graph and the sitemap use it.
+Settings are in `.env.example` (database, `AUTH_SECRET`, `ADMIN_PASSWORD`, optional Google sign-in and SMTP).
 
-## What makes it move
+## The site
 
-- **The voice field** (`src/components/three/VoiceField.tsx`): ~100k glowing particles forming a 3D waveform landscape
-  behind the whole page. A fixed backdrop: "stage" sections (`data-stage`: hero, manifesto, finale, footer) are
-  transparent windows onto it; the content band in between is opaque and melts into it with long gradients.
-- **One audio engine** (`src/lib/audio-engine.ts`): plays the real FireVoice renders, runs the background score, and
-  analyses both into 32 frequency bands that drive the field and every live waveform. Music ducks under a voice clip.
-- **The background score** (`src/lib/music.ts`): an original generative ambient piece composed live with Web Audio
-  (pads, heartbeat pulse, bass, bell arpeggios, reverb). No audio files, nothing to license. It starts on the
-  visitor's first click or key press; the "Sound" toggle in the nav turns it off, and that choice is remembered.
-- **Real renders**: `public/audio/*.mp3` were rendered by FireVoice itself (flagship engine, designed synthetic
-  voices); `src/data/clips.json` holds their waveform peaks and word timings (from FireVoice's own transcription).
-  Avatars in `public/avatars` come from the app's voice library.
+- `src/site/`: the home page. `ui.tsx` (the FireVoice pill, the download button, headings), `motion.tsx` (smooth
+  scroll, `useScene` for pinned scroll scenes, `Reveal`), `Nav.tsx`, `Footer.tsx`, and one file per section in
+  `sections/`: Hero, Apps, Speed, HowItWorks, Features, Privacy, Voices, Faq, Closing.
+- The look: warm paper, serif headings with an italic word, the app's fire orange, and big rounded sheets that slide
+  over each other. Light only. All art is CSS/SVG; the voice cards play real FireVoice renders from `public/audio`.
+- Reduced motion turns off smooth scrolling, pinning and loops; every scene has a still, finished layout.
+- Never name the underlying models: use the app's engine brands (`src/data/engines.json`). No testimonials, logos or
+  numbers we cannot back.
 
-### When the 3D is skipped or deferred
+## Accounts
 
-- Its code is a separate chunk. Desktops load it when the browser is idle; phones and tablets on the first touch,
-  scroll or key press. Particle count is lower on phones and smaller CPUs.
-- Skipped (a still SVG wave and glow remain) for reduced motion, data saver, fewer than 4 CPU cores or under 4 GB of
-  memory, or no WebGL 2. Frames stop whenever no stage section is on screen.
-- Reduced motion also turns off smooth scrolling, the scrubbed manifesto and the entrance animations.
+- `/signin`: "Get started": Google, or an email that then asks for its password, Google, or a new account.
+- `/account`: name, password, delete. `/link?code=...`: the desktop app signing in through the browser.
+- `/admin`: the private dashboard (installs, accounts, events, feedback, waitlist, crashes, licences).
 
-### Engine names
+## Deploying
 
-The site never names the underlying open-source models. It uses the app's own engine brands (Inferno, Torch,
-Beacon, Forge, Hearth, Firebrand, Firestorm, Candle, Magma, Smoulder, Flare, Flicker, Spark, Phoenix, Flash) from
-`src/data/engines.json`.
-
-## Checked
-
-Lighthouse (production build, local): desktop 100 performance / 100 accessibility / 100 best practices / 100 SEO;
-mobile 89 / 100 / 100 / 100. Screenshots are in `docs/screenshots/`.
+Coolify builds the Dockerfile; the container applies database migrations on start. Push `main`, then Deploy.

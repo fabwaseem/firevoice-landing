@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Logo } from "@/components/ui";
+import { Mark as Logo } from "@/site/ui";
 import { api, ghost, input } from "./kit";
 import { Overview } from "./views/Overview";
 import { Installs } from "./views/Installs";

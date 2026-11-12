@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/server/db";
 import { env } from "@/lib/server/env";
@@ -12,6 +13,8 @@ import { client } from "@/lib/server/request";
  * one else's sign-in can be slipped in), the email must be verified by Google, and then: the account with this Google
  * id, or the account with this email (linked now), or a new account. */
 export const GET = route(async (req) => {
+  // every sign-in gets its own state and verifier: never built ahead of time
+  await connection();
   const site = env().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   const fail = (why: string) => new Response(null, { status: 302, headers: { Location: `${site}/signin?error=${why}`, "Cache-Control": "no-store" } });
   if (!googleOn()) return fail("google_off");

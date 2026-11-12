@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { env } from "@/lib/server/env";
 import { randomToken, sign } from "@/lib/server/crypto";
 import { route, rateLimit } from "@/lib/server/http";
@@ -8,6 +9,8 @@ import { client } from "@/lib/server/request";
 /** Starts "Continue with Google": a fresh state and PKCE verifier in a signed, httpOnly, ten-minute cookie, then off
  * to Google. ?next= is where to come back to on this site. */
 export const GET = route(async (req) => {
+  // every sign-in gets its own state and verifier: never built ahead of time
+  await connection();
   const site = env().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   if (!googleOn()) return Response.redirect(`${site}/signin?error=google_off`, 302);
   rateLimit("oauth", client(req).ip);

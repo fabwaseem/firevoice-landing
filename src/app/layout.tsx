@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import { site } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
+// the display face: upright for headings, italic for the words they lean on
 const serif = Instrument_Serif({
   variable: "--font-instrument",
   subsets: ["latin"],
   weight: "400",
-  style: "italic",
+  style: ["normal", "italic"],
   display: "swap",
 });
 const mono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], display: "swap" });
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f6f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#07080b" },
+    { media: "(prefers-color-scheme: light)", color: "#fbf7f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#fbf7f1" },
   ],
 };
 
@@ -67,11 +67,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
       className={`${inter.variable} ${serif.variable} ${mono.variable}`}
     >
       <body className="min-h-dvh">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-surface focus:px-4 focus:py-2"
@@ -79,7 +77,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Skip to content
           </a>
           {children}
-        </ThemeProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

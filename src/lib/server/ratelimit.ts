@@ -48,6 +48,7 @@ export const LIMITS = {
   applogin: [20, 3_600_000], // the app asking to sign in through the browser
   poll: [60, 60_000], // the app checking whether it was approved (per request)
   approve: [30, 900_000], // looking up or approving codes in the browser (per person)
+  lookup: [20, 900_000], // "continue with email": which next step an email gets (per IP)
   oauth: [30, 900_000], // Google sign-in starts and returns
 } as const satisfies Record<string, readonly [number, number]>;
 

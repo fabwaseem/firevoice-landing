@@ -1,78 +1,51 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* FireVoice site. A warm, quiet page in the app's own palette: cream paper, near-black ink, the app's fire orange as
+   the one accent, and big rounded "sheets" (dark ember, deep fire) that slide over each other as you scroll.
+   Light only: the dark sheets give the contrast. */
 
-/* ------------------------------------------------------------ tokens (from the app) */
 :root {
-  --page-bg: var(--bg);
   color-scheme: light;
-  --bg: #f6f6f8;
-  --bg-elev: #fbfbfc;
-  --surface: #ffffff;
-  --surface-2: #f4f5f7;
-  --surface-3: #eceef3;
-  --ink: #0f1115;
-  --ink-2: #3a3f4b;
-  --muted: #5f6573;
-  --faint: #6c7280;
-  --line: rgba(17, 19, 24, 0.08);
-  --line-strong: rgba(17, 19, 24, 0.14);
+  --bg: #fbf7f1; /* the page: warm paper */
+  --bg-elev: #fffdf9;
+  --surface: #fffdf9; /* cards on the page */
+  --surface-2: #f3ede4; /* sand: quiet panels */
+  --surface-3: #e9e1d5;
+  --ink: #17130f;
+  --ink-2: #463f38;
+  --muted: #6f665d;
+  --faint: #8f857b;
+  --line: rgba(23, 19, 15, 0.09);
+  --line-strong: rgba(23, 19, 15, 0.16);
   --fire: #ff5a2d;
   --fire-2: #ff8a4c;
-  --fire-ink: #c8380e;
-  --fire-soft: rgba(255, 90, 45, 0.1);
+  --fire-ink: #c63b10;
+  --fire-soft: #ffe6da;
   --ok: #17935f;
-  --glow: rgba(255, 106, 51, 0.22);
-  --shadow-lg: 0 40px 80px -40px rgba(17, 19, 24, 0.28), 0 12px 28px -14px rgba(17, 19, 24, 0.12);
+  --glow: rgba(255, 106, 51, 0.28);
+  --ember: #16110d; /* the dark sheets */
+  --ember-2: #221913;
+  --deep: #3a140a; /* the deep fire sheet */
+  --deep-2: #521c0d;
+  --shadow-lg: 0 40px 80px -40px rgba(23, 19, 15, 0.3), 0 12px 28px -14px rgba(23, 19, 15, 0.14);
   --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+  --sheet-r: clamp(28px, 4vw, 56px);
 }
 
-.dark {
-  color-scheme: dark;
-  --bg: #07080b;
-  --bg-elev: #0c0d12;
-  --surface: #111319;
-  --surface-2: #171a21;
-  --surface-3: #1f232c;
-  --ink: #f3f4f7;
-  --ink-2: #cdd1db;
-  --muted: #9aa0ae;
-  --faint: #828899;
-  --line: rgba(255, 255, 255, 0.07);
-  --line-strong: rgba(255, 255, 255, 0.13);
-  --fire: #ff6b3d;
-  --fire-2: #ff9c5e;
-  --fire-ink: #ff8a5c;
-  --fire-soft: rgba(255, 107, 61, 0.14);
-  --ok: #3dd08f;
-  --glow: rgba(255, 98, 41, 0.28);
-  --shadow-lg: 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 10px 26px -12px rgba(0, 0, 0, 0.6);
+/* parts of a dark sheet use the same names, flipped */
+.on-dark {
+  --ink: #f6efe6;
+  --ink-2: #d9cfc3;
+  --muted: #a99d90;
+  --faint: #8a7f74;
+  --line: rgba(255, 245, 235, 0.1);
+  --line-strong: rgba(255, 245, 235, 0.18);
+  --surface: #221913;
+  --surface-2: #2b2019;
+  --fire-ink: #ff9a6b;
+  --fire-soft: rgba(255, 106, 61, 0.16);
   --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
-}
-
-/* "stages" (hero, manifesto, finale, demo panels) are always dark, whatever the theme */
-.stage {
-  color-scheme: dark;
   color: var(--ink);
-  --bg: #07080b;
-  --bg-elev: #0c0d12;
-  --surface: #111319;
-  --surface-2: #171a21;
-  --surface-3: #1f232c;
-  --ink: #f3f4f7;
-  --ink-2: #cdd1db;
-  --muted: #9aa0ae;
-  --faint: #828899;
-  --line: rgba(255, 255, 255, 0.07);
-  --line-strong: rgba(255, 255, 255, 0.13);
-  --fire: #ff6b3d;
-  --fire-2: #ff9c5e;
-  --fire-ink: #ff8a5c;
-  --fire-soft: rgba(255, 107, 61, 0.14);
-  --ok: #3dd08f;
-  --glow: rgba(255, 98, 41, 0.28);
-  --shadow-lg: 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 10px 26px -12px rgba(0, 0, 0, 0.6);
-  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 @theme inline {
@@ -96,50 +69,42 @@
   --color-fire-ink: var(--fire-ink);
   --color-fire-soft: var(--fire-soft);
   --color-ok: var(--ok);
+  --color-ember: var(--ember);
+  --color-ember-2: var(--ember-2);
+  --color-deep: var(--deep);
+  --color-deep-2: var(--deep-2);
 
   --shadow-lg: var(--shadow-lg);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
 
-  --animate-marquee: marquee 45s linear infinite;
-  --animate-float: float 9s ease-in-out infinite;
-  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-  --animate-blink: blink 1s steps(2, start) infinite;
+  --animate-marquee: marquee 40s linear infinite;
   --animate-eq: eq 0.9s ease-in-out infinite alternate;
+  --animate-blink: blink 1s steps(2, start) infinite;
 }
 
 @keyframes marquee {
   to { transform: translateX(-50%); }
 }
-@keyframes float {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(0, -12px, 0) scale(1.03); }
-}
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.7; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-@keyframes fade-up {
-  from { opacity: 0; transform: translate3d(0, 16px, 0); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes grain {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-3%, 2%); }
-  50% { transform: translate(2%, -3%); }
-  75% { transform: translate(-2%, -1%); }
-  100% { transform: translate(0, 0); }
-}
 @keyframes eq {
-  0% { height: 3px; }
-  100% { height: 14px; }
+  0% { transform: scaleY(0.25); }
+  100% { transform: scaleY(1); }
 }
 @keyframes blink {
   to { visibility: hidden; }
 }
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
+}
 
 @layer base {
   * { border-color: var(--line); }
-  html { scroll-padding-top: 5rem; overflow-x: clip; }
+  html { scroll-padding-top: 6rem; overflow-x: clip; }
   html.lenis, html.lenis body { height: auto; }
   .lenis.lenis-smooth { scroll-behavior: auto !important; }
   body {
@@ -156,91 +121,71 @@
 }
 
 @layer components {
-  .container-x { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8; }
-  .eyebrow {
-    @apply font-mono text-[11px] font-medium tracking-[0.18em] uppercase text-fire-ink;
-  }
-  .h-display {
-    @apply font-semibold tracking-[-0.045em] leading-[0.98] text-ink;
-    font-size: clamp(2.6rem, 7.2vw, 5.9rem);
-  }
-  .h-hero {
-    @apply font-semibold text-white;
-    font-size: clamp(3rem, 8.6vw, 8.4rem);
-    line-height: 0.93;
-    letter-spacing: -0.055em;
-  }
-  .h-section {
-    @apply font-semibold tracking-[-0.035em] leading-[1.04] text-ink;
-    font-size: clamp(2rem, 4.6vw, 3.6rem);
-  }
-  .accent {
+  .container-x { @apply mx-auto w-full max-w-[1180px] px-4 sm:px-6 lg:px-8; }
+
+  /* small caps label above a heading */
+  .eyebrow { @apply text-[11.5px] font-medium tracking-[0.16em] uppercase text-muted; }
+
+  /* the serif headings, with an italic word or two (<em>) */
+  .display {
     font-family: var(--font-serif);
-    font-style: italic;
     font-weight: 400;
-    letter-spacing: -0.015em;
-    background: linear-gradient(100deg, var(--fire-2), var(--fire) 55%, #ff3d6e);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    padding-right: 0.08em;
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    color: var(--ink);
+    text-wrap: balance;
   }
-  .card {
-    @apply rounded-[22px] border border-line bg-surface;
-    box-shadow: var(--edge);
+  .display em { font-style: italic; letter-spacing: -0.01em; }
+  .display-xl { font-size: clamp(3.4rem, 9vw, 7.6rem); }
+  .display-lg { font-size: clamp(2.7rem, 6.4vw, 5.4rem); }
+  .display-md { font-size: clamp(2.2rem, 4.6vw, 3.9rem); line-height: 1.02; }
+  .display-sm { font-size: clamp(1.7rem, 2.8vw, 2.4rem); line-height: 1.08; }
+  .lede { @apply text-[16.5px] leading-relaxed text-ink-2 sm:text-[17.5px]; text-wrap: pretty; }
+
+  /* a big rounded sheet that the next one slides over */
+  .sheet { position: relative; border-radius: var(--sheet-r) var(--sheet-r) 0 0; }
+  .sheet-round { border-radius: var(--sheet-r); }
+
+  .btn {
+    @apply relative inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-6 text-[15px] font-semibold whitespace-nowrap transition-[transform,box-shadow,background-color] duration-300 outline-offset-4;
   }
-  .fire-gradient { background: linear-gradient(135deg, #ff8a4c, #ff4d2e); }
   .btn-fire {
-    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-5 h-11 text-[15px] font-medium text-white transition-[transform,box-shadow] duration-300;
+    @apply text-white;
     background: linear-gradient(135deg, #ff8a4c, #ff4d2e);
-    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 10px 30px -10px rgba(255, 77, 46, 0.7);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 12px 30px -12px rgba(255, 77, 46, 0.8);
   }
-  .btn-fire:hover { transform: translateY(-1px); box-shadow: 0 1px 0 0 rgba(255,255,255,.35) inset, 0 16px 40px -12px rgba(255, 77, 46, 0.85); }
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 h-11 text-[15px] font-medium text-ink border border-line-strong bg-surface/60 backdrop-blur transition-colors hover:bg-surface;
+  .btn-fire:hover { transform: translateY(-1px); box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 18px 40px -14px rgba(255, 77, 46, 0.9); }
+  .btn-fire:active { transform: translateY(0) scale(0.98); }
+  .btn-line { @apply border border-line-strong bg-surface/70 text-ink backdrop-blur hover:bg-surface; }
+  .btn-sm { @apply h-10 px-4 text-[14px]; }
+
+  .card { @apply rounded-[26px] border border-line bg-surface; box-shadow: var(--edge); }
+
+  /* the FireVoice pill: the app's dictation pill, dark glass */
+  .fv-pill {
+    background: linear-gradient(180deg, rgba(30, 31, 39, 0.97), rgba(13, 14, 18, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 22px 44px -18px rgba(0, 0, 0, 0.7),
+      0 2px 8px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    color: #f3f4f7;
   }
-  .grid-bg {
-    background-image:
-      linear-gradient(to right, var(--line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
-  }
-  /* film grain over the whole page */
-  .grain {
-    position: fixed;
-    inset: -50%;
-    z-index: 70;
-    pointer-events: none;
-    opacity: 0.05;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: grain 1.2s steps(6) infinite;
-  }
-  /* hero entrance: plain CSS so it plays before hydration and never delays the largest paint */
-  .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
-  .mask-fade-x { mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); }
-  /* text with light passing over it (the dictation pill while it writes) */
+
+  .mask-fade-x { mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); }
   .shimmer-text {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.55) 35%, #fff 50%, rgba(255, 255, 255, 0.55) 65%, rgba(255, 255, 255, 0.55) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 35%, #fff 50%, rgba(255, 255, 255, 0.5) 65%, rgba(255, 255, 255, 0.5) 100%);
     background-size: 220% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     animation: shimmer 1.6s linear infinite;
   }
-  /* visually hidden, out of the way of people and their tools, there for form-filling bots */
-  .honeypot {
-    position: absolute !important;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-}
-
-@keyframes shimmer {
-  from { background-position: 100% 0; }
-  to { background-position: -120% 0; }
+  /* there for form-filling bots, out of the way of people */
+  .honeypot { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  /* hero entrance in plain CSS, so it plays before hydration */
+  .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 80ms); }
 }
 
 @media (prefers-reduced-motion: reduce) {

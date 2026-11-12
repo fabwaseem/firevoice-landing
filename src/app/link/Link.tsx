@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { button } from "@/components/PageShell";
-import { Logo } from "@/components/ui";
+import { Mark as Logo } from "@/site/ui";
 import { post, useMe } from "@/components/auth/client";
 
 type Info = { device: string | null; country: string | null; city: string | null; createdAt: string };

@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PageShell } from "@/components/PageShell";
+import { AuthShell } from "@/components/PageShell";
 import { SignIn } from "./SignIn";
 
 export const metadata: Metadata = {
-  title: "Sign in",
-  description: "Sign in to your FireVoice account, or create one.",
+  title: "Get started",
+  description: "Sign in to FireVoice, or create a free account.",
   robots: { index: false, follow: false },
 };
 
 export default function SignInPage() {
   return (
-    <PageShell width="max-w-md">
-      <Suspense fallback={<div className="h-96" />}>
+    <AuthShell>
+      <Suspense fallback={<div className="h-[460px] rounded-[28px] bg-surface" />}>
         <SignIn />
       </Suspense>
-    </PageShell>
+    </AuthShell>
   );
 }

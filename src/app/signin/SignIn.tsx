@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { button, field } from "@/components/PageShell";
-import { GoogleButton } from "@/components/auth/GoogleButton";
 import { post, safeNext, useMe, useProviders } from "@/components/auth/client";
+import { Pill } from "@/site/ui";
 
 const ERRORS: Record<string, string> = {
   google_off: "Signing in with Google is not available right now.",
@@ -15,10 +14,10 @@ const ERRORS: Record<string, string> = {
   disabled: "This account is turned off. Contact us if this is a mistake.",
 };
 
-type Mode = "signin" | "signup" | "forgot";
+type Step = "start" | "password" | "google" | "signup" | "forgot" | "sent";
 
-/** Sign in or create an account (email and password, or Google), then back to where the person came from: the app's
- * sign-in request (/link?code=...) or their account. */
+/** "Get started": Google first, or an email; then the step that email needs (its password, Google, or a new
+ * account). Afterwards back to where the person came from: the app's sign-in request or their account. */
 export function SignIn() {
   const params = useSearchParams();
   const router = useRouter();
@@ -26,145 +25,227 @@ export function SignIn() {
   const fromApp = next.startsWith("/link");
   const providers = useProviders();
   const { me } = useMe();
-  const [mode, setMode] = useState<Mode>(params.get("mode") === "signup" ? "signup" : "signin");
+  const [step, setStep] = useState<Step>("start");
+  const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(ERRORS[params.get("error") ?? ""] ?? null);
-  const [sent, setSent] = useState(false);
+  const focusRef = useRef<HTMLInputElement>(null);
 
   // already signed in on this browser: straight on
   useEffect(() => {
     if (me) router.replace(next);
   }, [me, next, router]);
+  // each step puts the cursor where the typing goes
+  useEffect(() => {
+    focusRef.current?.focus();
+  }, [step]);
 
-  async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const email = String(f.get("email") ?? "").trim();
+  const go = (s: Step) => {
+    setError(null);
+    setStep(s);
+  };
+
+  async function run(fn: () => Promise<void>) {
     setBusy(true);
     setError(null);
     try {
-      if (mode === "forgot") {
-        await post("/api/v1/auth/forgot", { email });
-        setSent(true);
-      } else {
-        await post(mode === "signup" ? "/api/v1/auth/signup" : "/api/v1/auth/login", {
-          email,
-          password: String(f.get("password") ?? ""),
-          ...(mode === "signup" ? { name: String(f.get("name") ?? "").trim() || null } : {}),
-        });
-        router.replace(next);
-      }
-    } catch (er) {
-      setError((er as Error).message);
+      await fn();
+    } catch (e) {
+      setError((e as Error).message);
     } finally {
       setBusy(false);
     }
   }
 
-  const title = mode === "signup" ? "Create your FireVoice account" : mode === "forgot" ? "Reset your password" : "Sign in to FireVoice";
+  const onEmail = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const v = String(new FormData(e.currentTarget).get("email") ?? "").trim();
+    run(async () => {
+      const r = await post<{ next: "password" | "google" | "signup" | "disabled" }>("/api/v1/auth/lookup", { email: v });
+      setEmail(v);
+      if (r.next === "disabled") throw new Error(ERRORS.disabled);
+      setStep(r.next);
+    });
+  };
+  const onPassword = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const password = String(new FormData(e.currentTarget).get("password") ?? "");
+    run(async () => {
+      await post("/api/v1/auth/login", { email, password });
+      router.replace(next);
+    });
+  };
+  const onSignup = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    run(async () => {
+      await post("/api/v1/auth/signup", { email, password: String(f.get("password") ?? ""), name: String(f.get("name") ?? "").trim() || null });
+      router.replace(next);
+    });
+  };
+  const onForgot = () =>
+    run(async () => {
+      await post("/api/v1/auth/forgot", { email });
+      setStep("sent");
+    });
+
+  const google = providers?.google ? `/api/auth/google/start?next=${encodeURIComponent(next)}` : null;
+
   return (
-    <div>
-      {fromApp && (
-        <p className="mb-5 rounded-xl bg-fire-soft px-4 py-3 text-[14px] text-ink-2">Sign in here to finish signing in to the FireVoice app.</p>
-      )}
-      <h1 className="text-[30px] leading-tight font-semibold tracking-tight">{title}</h1>
-      <p className="mt-2 text-[15px] text-ink-2">
-        {mode === "forgot" ? "We will email you a link to choose a new password." : "Free, and optional: FireVoice works the same without one."}
-      </p>
-
-      {mode !== "forgot" && providers?.google && (
-        <div className="mt-7 space-y-5">
-          <GoogleButton next={next} />
-          <div className="flex items-center gap-3 text-[12.5px] text-faint">
-            <span className="h-px flex-1 bg-line" /> or with email <span className="h-px flex-1 bg-line" />
-          </div>
-        </div>
-      )}
-
-      {mode === "forgot" && sent ? (
-        <div role="status" className="mt-7 space-y-4">
-          <p className="text-[15px] text-ink-2">If there is an account for that email, a link is on its way. It works for one hour.</p>
-          <button className="text-[14px] text-fire-ink underline underline-offset-4" onClick={() => (setMode("signin"), setSent(false))}>
-            Back to sign in
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={submit} className={`${providers?.google && mode !== "forgot" ? "mt-5" : "mt-7"} space-y-4`}>
-          {mode === "signup" && (
-            <div>
-              <label htmlFor="name" className="mb-1.5 block text-[14px] font-medium">
-                Name <span className="font-normal text-muted">(optional)</span>
-              </label>
-              <input id="name" name="name" autoComplete="name" maxLength={80} className={field} />
-            </div>
-          )}
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-[14px] font-medium">
-              Email
-            </label>
-            <input id="email" name="email" type="email" required autoComplete="email" maxLength={254} className={field} />
-          </div>
-          {mode !== "forgot" && (
-            <div>
-              <div className="mb-1.5 flex items-baseline justify-between">
-                <label htmlFor="password" className="block text-[14px] font-medium">
-                  Password {mode === "signup" && <span className="font-normal text-muted">(at least 10 characters)</span>}
-                </label>
-                {mode === "signin" && (
-                  <button type="button" className="text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline" onClick={() => (setMode("forgot"), setError(null))}>
-                    Forgot?
-                  </button>
-                )}
-              </div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={mode === "signup" ? 10 : 1}
-                maxLength={200}
-                autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                className={field}
-              />
-            </div>
-          )}
-          <p aria-live="polite" className="min-h-5 text-[14px] text-fire-ink">
-            {error}
-          </p>
-          <button type="submit" className={`${button} w-full`} disabled={busy}>
-            {busy ? "One moment…" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send link" : "Sign in"}
-          </button>
-        </form>
-      )}
-
-      <p className="mt-6 text-center text-[14px] text-muted">
-        {mode === "signup" ? (
-          <>
-            Already have an account?{" "}
-            <button className="font-medium text-fire-ink hover:underline" onClick={() => (setMode("signin"), setError(null))}>
-              Sign in
-            </button>
-          </>
-        ) : mode === "signin" ? (
-          <>
-            New to FireVoice?{" "}
-            <button className="font-medium text-fire-ink hover:underline" onClick={() => (setMode("signup"), setError(null))}>
-              Create an account
-            </button>
-          </>
-        ) : (
-          <button className="font-medium text-fire-ink hover:underline" onClick={() => (setMode("signin"), setError(null))}>
-            Back to sign in
-          </button>
+    <div className="relative">
+      {/* the pill, perched on the card's corner */}
+      <div aria-hidden className="pointer-events-none absolute -top-5 -right-3 z-10 rotate-[8deg] sm:-right-6">
+        <Pill state={step === "sent" ? "done" : "listening"} level={0.55} size="md" />
+      </div>
+      <div className="rounded-[28px] bg-surface px-6 pt-10 pb-8 shadow-[0_30px_60px_-30px_rgba(23,19,15,0.35)] sm:px-9">
+        {fromApp && step === "start" && (
+          <p className="mb-5 rounded-2xl bg-fire-soft px-4 py-3 text-center text-[14px] text-ink-2">Sign in to finish signing in to the FireVoice app.</p>
         )}
-      </p>
-      <p className="mt-8 text-center text-[12.5px] text-faint">
-        By continuing you agree to how we handle data in the{" "}
-        <a className="underline underline-offset-4" href="/privacy">
-          privacy policy
-        </a>
-        .
-      </p>
+
+        {step === "start" && (
+          <Panel title="Get started">
+            {google && (
+              <>
+                <OAuthButton href={google} label="Continue with Google" icon={<GoogleIcon />} />
+                <div className="my-6 text-center text-[13px] text-muted">or</div>
+              </>
+            )}
+            <form onSubmit={onEmail} className="space-y-5">
+              <UnderlineInput ref={focusRef} name="email" type="email" label="Email" placeholder="Enter your email" autoComplete="email" defaultValue={email} />
+              <ErrorText text={error} />
+              <Submit busy={busy}>Continue</Submit>
+            </form>
+          </Panel>
+        )}
+
+        {step === "password" && (
+          <Panel title="Welcome back" email={email} onChange={() => go("start")}>
+            <form onSubmit={onPassword} className="space-y-5">
+              <UnderlineInput ref={focusRef} name="password" type="password" label="Password" placeholder="Your password" autoComplete="current-password" />
+              <ErrorText text={error} />
+              <Submit busy={busy}>Sign in</Submit>
+              <button type="button" onClick={onForgot} disabled={busy} className="mx-auto block text-[13.5px] text-muted underline-offset-4 hover:text-ink hover:underline">
+                Forgot your password?
+              </button>
+            </form>
+          </Panel>
+        )}
+
+        {step === "google" && (
+          <Panel title="Continue with Google" email={email} onChange={() => go("start")}>
+            <p className="mb-5 text-center text-[14.5px] text-ink-2">This account signs in with Google.</p>
+            {google ? <OAuthButton href={google} label="Continue with Google" icon={<GoogleIcon />} /> : <ErrorText text="Google sign-in is not available right now." />}
+            <button type="button" onClick={onForgot} disabled={busy} className="mx-auto mt-5 block text-[13.5px] text-muted underline-offset-4 hover:text-ink hover:underline">
+              Email me a link to set a password instead
+            </button>
+            <ErrorText text={error} />
+          </Panel>
+        )}
+
+        {step === "signup" && (
+          <Panel title="Create your account" email={email} onChange={() => go("start")}>
+            <form onSubmit={onSignup} className="space-y-5">
+              <UnderlineInput name="name" label="Name (optional)" placeholder="Your name" autoComplete="name" maxLength={80} />
+              <UnderlineInput ref={focusRef} name="password" type="password" label="Password" placeholder="At least 10 characters" autoComplete="new-password" minLength={10} />
+              <ErrorText text={error} />
+              <Submit busy={busy}>Create account</Submit>
+              <p className="text-center text-[12.5px] text-muted">
+                By continuing you agree to how we handle data in the{" "}
+                <a href="/privacy" className="underline underline-offset-4">
+                  privacy policy
+                </a>
+                .
+              </p>
+            </form>
+          </Panel>
+        )}
+
+        {step === "sent" && (
+          <Panel title="Check your email" email={email} onChange={() => go("start")}>
+            <p role="status" className="text-center text-[15px] leading-relaxed text-ink-2">
+              If there is an account for this email, a link to choose a password is on its way. It works for one hour.
+            </p>
+            <button type="button" onClick={() => go("password")} className="btn btn-line mt-6 w-full">
+              Back to sign in
+            </button>
+          </Panel>
+        )}
+      </div>
     </div>
+  );
+}
+
+function Panel({ title, email, onChange, children }: { title: string; email?: string; onChange?: () => void; children: ReactNode }) {
+  return (
+    <div className="animate-[fade-up_0.45s_cubic-bezier(0.25,1,0.5,1)_both]">
+      <h1 className="display mb-6 text-center text-[40px]">{title}</h1>
+      {email && (
+        <div className="mb-6 flex items-center justify-center gap-2 text-[14px] text-ink-2">
+          <span className="truncate font-medium">{email}</span>
+          <button type="button" onClick={onChange} className="shrink-0 text-fire-ink underline-offset-4 hover:underline">
+            Change
+          </button>
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function OAuthButton({ href, label, icon }: { href: string; label: string; icon: ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="flex h-12 w-full items-center justify-center gap-3 rounded-[14px] border-[1.5px] border-ink/85 bg-surface text-[15px] font-medium text-ink transition-colors hover:bg-surface-2"
+    >
+      {icon}
+      {label}
+    </a>
+  );
+}
+
+const UnderlineInput = function UnderlineInput({
+  ref,
+  label,
+  ...rest
+}: React.InputHTMLAttributes<HTMLInputElement> & { label: string; ref?: React.Ref<HTMLInputElement> }) {
+  return (
+    <label className="block">
+      <span className="sr-only">{label}</span>
+      <input
+        ref={ref}
+        required={rest.name !== "name"}
+        maxLength={rest.maxLength ?? (rest.type === "email" ? 254 : 200)}
+        className="h-12 w-full border-0 border-b-[1.5px] border-ink/80 bg-transparent px-0.5 text-[16px] text-ink outline-none placeholder:text-faint focus:border-fire"
+        {...rest}
+      />
+    </label>
+  );
+};
+
+function Submit({ busy, children }: { busy: boolean; children: ReactNode }) {
+  return (
+    <button type="submit" disabled={busy} className="btn btn-fire w-full disabled:opacity-60">
+      {busy ? "One moment…" : children}
+    </button>
+  );
+}
+
+function ErrorText({ text }: { text: string | null }) {
+  return (
+    <p aria-live="polite" className="min-h-5 text-center text-[13.5px] text-fire-ink">
+      {text}
+    </p>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
   );
 }
