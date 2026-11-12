@@ -1,4 +1,4 @@
-import { ArrowDown } from "lucide-react";
+import { ArrowDown } from "@/components/icons";
 import { WindowsIcon } from "../ui";
 import { site } from "@/lib/site";
 
@@ -14,12 +14,12 @@ export function Hero() {
       />
       <div className="container-x relative z-10 flex flex-1 flex-col items-center justify-center pb-[6vh] pt-36 text-center">
         <a
-          href="#chapters"
+          href="#dictation"
           style={i(0)}
           className="enter inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] py-1 pl-1 pr-3.5 text-[13px] text-white/75 backdrop-blur-md transition-colors hover:text-white"
         >
           <span className="rounded-full fire-gradient px-2 py-0.5 text-[11px] font-semibold text-white">New</span>
-          Dictation in every program
+          Just say &ldquo;Hey FireVoice&rdquo;
           <span aria-hidden>→</span>
         </a>
 
@@ -52,7 +52,7 @@ export function Hero() {
             className="group inline-flex h-14 items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] px-6 text-[16px] font-medium text-white backdrop-blur-md transition-colors hover:bg-white/[0.12]"
           >
             Hear the voices
-            <ArrowDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+            <ArrowDown className="size-4" />
           </a>
         </div>
         <p style={i(4)} className="enter mt-5 text-[13px] text-white/45">

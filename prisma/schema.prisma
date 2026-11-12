@@ -1,0 +1,297 @@
+// FireVoice cloud: accounts, installs of the desktop app, what they do (events, daily activity, crashes), feedback,
+// the waitlist and licences (built, but switched off while FireVoice is free: LICENSING_ENABLED).
+// Every time is UTC. Ids are cuids except the high-volume event table (bigint).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EmailTokenKind {
+  VERIFY
+  RESET
+}
+
+enum FeedbackKind {
+  BUG
+  IDEA
+  PRAISE
+  OTHER
+}
+
+enum FeedbackStatus {
+  NEW
+  SEEN
+  DONE
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+enum LicenseStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique // lower-cased
+  name            String?
+  passwordHash    String
+  role            Role      @default(USER)
+  emailVerifiedAt DateTime?
+  disabledAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastSeenAt      DateTime?
+  signupIp        String?
+  signupCountry   String?
+  signupCity      String?
+
+  sessions    Session[]
+  emailTokens EmailToken[]
+  installs    Install[]
+  licenses    License[]
+  feedback    Feedback[]
+  events      Event[]
+
+  @@index([createdAt])
+}
+
+/// A signed-in device or browser. The token itself is never stored, only its SHA-256.
+model Session {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
+  userId     String
+  installId  String?
+  ip         String?
+  country    String?
+  city       String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  install Install? @relation(fields: [installId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model EmailToken {
+  id        String         @id @default(cuid())
+  tokenHash String         @unique
+  kind      EmailTokenKind
+  userId    String
+  createdAt DateTime       @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, kind])
+}
+
+/// One copy of the desktop app on one computer. It registers once and then authenticates with its own token.
+model Install {
+  id         String  @id @default(cuid())
+  tokenHash  String  @unique
+  deviceId   String  @unique // a hash of the machine's id, sent by the app: a reinstall finds its old row
+  userId     String?
+  consent    Boolean @default(true)
+
+  appVersion String
+  channel    String?
+  os         String
+  osVersion  String?
+  arch       String?
+  cpu        String?
+  cores      Int?
+  ramGb      Float?
+  gpu        String?
+  locale     String?
+  timezone   String?
+  screen     String?
+  hostname   String?
+
+  firstIp   String?
+  lastIp    String?
+  country   String?
+  region    String?
+  city      String?
+  latitude  Float?
+  longitude Float?
+
+  launches    Int      @default(0)
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  deletedAt   DateTime?
+
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  events      Event[]
+  daily       DailyActive[]
+  crashes     Crash[]
+  sessions    Session[]
+  feedback    Feedback[]
+  activations Activation[]
+
+  @@index([lastSeenAt])
+  @@index([firstSeenAt])
+  @@index([userId])
+  @@index([country])
+  @@index([appVersion])
+}
+
+/// Anything the app reports: app.launch, dictation.done, tts.generate, page.view... `props` is small JSON (<= 4 KB).
+model Event {
+  id         BigInt   @id @default(autoincrement())
+  installId  String
+  userId     String?
+  name       String
+  props      Json?
+  at         DateTime // when it happened on the computer (clamped to the last 7 days, never the future)
+  receivedAt DateTime @default(now())
+  session    String?  // the app run it belongs to
+  appVersion String?
+  ip         String?
+  country    String?
+
+  install Install @relation(fields: [installId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([at])
+  @@index([name, at])
+  @@index([installId, at])
+}
+
+/// One row per install per day it was used: daily/weekly/monthly actives without scanning events.
+model DailyActive {
+  day       DateTime @db.Date
+  installId String
+  events    Int      @default(0)
+  words     Int      @default(0) // words dictated that day
+  seconds   Int      @default(0) // seconds the app was in use that day (heartbeats)
+
+  install Install @relation(fields: [installId], references: [id], onDelete: Cascade)
+
+  @@id([day, installId])
+  @@index([installId])
+}
+
+model Crash {
+  id         String   @id @default(cuid())
+  installId  String
+  appVersion String
+  os         String?
+  kind       String // panic, backend, ui
+  message    String
+  stack      String?
+  context    Json?
+  createdAt  DateTime @default(now())
+
+  install Install @relation(fields: [installId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([installId])
+}
+
+model Feedback {
+  id         String         @id @default(cuid())
+  kind       FeedbackKind
+  message    String
+  email      String?
+  rating     Int?
+  status     FeedbackStatus @default(NEW)
+  source     String // app, web
+  userId     String?
+  installId  String?
+  appVersion String?
+  os         String?
+  context    Json?
+  ip         String?
+  country    String?
+  city       String?
+  userAgent  String?
+  createdAt  DateTime       @default(now())
+
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  install Install? @relation(fields: [installId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  interest  String
+  source    String
+  ip        String?
+  country   String?
+  city      String?
+  userAgent String?
+  referrer  String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// A licence key. Only its SHA-256 and last four characters are kept; the key is shown once, when it is made.
+model License {
+  id        String        @id @default(cuid())
+  keyHash   String        @unique
+  keyLast4  String
+  plan      Plan          @default(PRO)
+  status    LicenseStatus @default(ACTIVE)
+  seats     Int           @default(1)
+  note      String?
+  userId    String?
+  expiresAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  activations Activation[]
+
+  @@index([userId])
+}
+
+model Activation {
+  id          String   @id @default(cuid())
+  licenseId   String
+  installId   String
+  createdAt   DateTime @default(now())
+  lastCheckAt DateTime @default(now())
+
+  license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  install Install @relation(fields: [installId], references: [id], onDelete: Cascade)
+
+  @@unique([licenseId, installId])
+}
+
+/// What the admin did (and failed admin sign-ins).
+model AuditLog {
+  id     String   @id @default(cuid())
+  action String
+  target String?
+  ip     String?
+  meta   Json?
+  at     DateTime @default(now())
+
+  @@index([at])
+}

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play } from "@/components/icons";
 import { Reveal } from "../Reveal";
 import { SectionHeader } from "../ui";
 import { clips, currentTime, getServerSnapshot, getSnapshot, onFrame, play, subscribe, type Clip } from "@/lib/audio-engine";
@@ -68,7 +68,7 @@ function VoiceCard({ clip }: { clip: Clip }) {
             on ? "bg-white text-[#0a0a0c]" : "bg-black/45 text-white backdrop-blur group-hover:bg-white group-hover:text-[#0a0a0c]"
           }`}
         >
-          {on ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4 fill-current" />}
+          {on ? <Pause className="size-4" /> : <Play fill="currentColor" className="ml-0.5 size-4" />}
         </span>
         <span className="absolute left-3 top-3 rounded-full bg-black/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/90 backdrop-blur">
           {clip.role}

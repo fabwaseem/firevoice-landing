@@ -1,7 +1,6 @@
 import { Logo } from "../ui";
 import { nav, site } from "@/lib/site";
 
-
 export function Footer() {
   return (
     <footer className="relative z-10">
@@ -24,6 +23,16 @@ export function Footer() {
             <li>
               <a href={site.releases} className="hover:text-ink">
                 Releases
+              </a>
+            </li>
+            <li>
+              <a href="/privacy" className="hover:text-ink">
+                Privacy
+              </a>
+            </li>
+            <li>
+              <a href="/feedback" className="hover:text-ink">
+                Feedback
               </a>
             </li>
           </ul>

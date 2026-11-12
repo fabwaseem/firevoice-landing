@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AudioLines, Languages, MessagesSquare, Mic, Music, ScrollText, Sparkles, Wand2 } from "lucide-react";
+import { AudioLines, Languages, MessagesSquare, Mic, Music, ScrollText, Sparkles, Wand2 } from "@/components/icons";
 import { SectionHeader } from "../ui";
 import {
   CloneVisual,
@@ -40,11 +40,11 @@ const chapters = [
     Visual: DesignVisual,
   },
   {
-    id: "dictation",
+    id: "dictate",
     icon: Mic,
     label: "Dictate",
     title: "Speak in any program. It types.",
-    text: "Hold Ctrl + Alt + Space, say what you mean, let go. The words appear wherever your cursor is: mail, chat, documents, code.",
+    text: "Say “Hey FireVoice”, or hold Ctrl + Alt + Space, and say what you mean. The words appear wherever your cursor is: mail, chat, documents, code.",
     Visual: DictateVisual,
   },
   {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Check, Copy, FileJson, Plug, Radio } from "lucide-react";
+import { Bot, Check, Copy, FileJson, Plug, Radio } from "@/components/icons";
 import { Reveal } from "../Reveal";
 import { SectionHeader } from "../ui";
 

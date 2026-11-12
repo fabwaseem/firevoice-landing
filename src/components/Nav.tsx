@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 const noop = () => () => {};
 import { useTheme } from "next-themes";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "@/components/icons";
 import { AnimatePresence, motion } from "motion/react";
 import { Logo, WindowsIcon } from "./ui";
 import { nav, site } from "@/lib/site";
@@ -82,10 +82,10 @@ export function Nav() {
             <Logo size={28} />
             <span className="text-[17px]">FireVoice</span>
           </a>
-          <ul className="hidden items-center gap-1 md:flex">
+          <ul className="hidden items-center gap-1 lg:flex">
             {nav.map((n) => (
               <li key={n.href}>
-                <a href={n.href} className="rounded-full px-3.5 py-2 text-sm text-muted transition-colors hover:text-ink">
+                <a href={n.href} className="whitespace-nowrap rounded-full px-3.5 py-2 text-sm text-muted transition-colors hover:text-ink">
                   {n.label}
                 </a>
               </li>
@@ -99,7 +99,7 @@ export function Nav() {
             </a>
             <button
               type="button"
-              className="grid size-9 place-items-center rounded-full text-ink md:hidden"
+              className="grid size-9 place-items-center rounded-full text-ink lg:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -116,7 +116,7 @@ export function Nav() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden md:hidden"
+              className="overflow-hidden lg:hidden"
             >
               <ul className="container-x flex flex-col gap-1 pb-5">
                 {nav.map((n) => (

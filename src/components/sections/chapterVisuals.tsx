@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Check, FileAudio, Upload } from "lucide-react";
+import { Check, FileAudio, Upload } from "@/components/icons";
 import { Bars } from "../ui";
 import { DictationDemo } from "./Dictation";
 

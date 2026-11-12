@@ -219,6 +219,28 @@
   /* hero entrance: plain CSS so it plays before hydration and never delays the largest paint */
   .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
   .mask-fade-x { mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); }
+  /* text with light passing over it (the dictation pill while it writes) */
+  .shimmer-text {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.55) 35%, #fff 50%, rgba(255, 255, 255, 0.55) 65%, rgba(255, 255, 255, 0.55) 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 1.6s linear infinite;
+  }
+  /* visually hidden, out of the way of people and their tools, there for form-filling bots */
+  .honeypot {
+    position: absolute !important;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+}
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

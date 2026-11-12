@@ -16,7 +16,7 @@ import {
   Pause,
   Play,
   ScrollText,
-} from "lucide-react";
+} from "@/components/icons";
 import { Captions } from "../Captions";
 import { Bars, Logo } from "../ui";
 import { clips, currentTime, getServerSnapshot, getSnapshot, onFrame, play, subscribe, type Clip } from "@/lib/audio-engine";
@@ -178,7 +178,7 @@ export function AppWindow() {
               className="grid size-10 shrink-0 place-items-center rounded-full fire-gradient text-white shadow-[0_8px_20px_-8px_rgba(255,77,46,.8)]"
               aria-label={on ? `Pause ${clip.name}` : `Play ${clip.name}`}
             >
-              {on ? <Pause className="size-4" /> : <Play className="ml-0.5 size-4 fill-current" />}
+              {on ? <Pause className="size-4" /> : <Play fill="currentColor" className="ml-0.5 size-4" />}
             </button>
             <Progress clip={clip} on={on} />
           </div>

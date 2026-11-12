@@ -1,10 +1,30 @@
-import { Plus } from "lucide-react";
+import { Plus } from "@/components/icons";
 import { SectionHeader } from "../ui";
 
 export const faqs = [
   {
     q: "Is anything I write or say uploaded?",
-    a: "No. Speech, dictation, cloning, dubbing and transcription all run on your own computer. The internet is only used to download the app, the voice engines and updates.",
+    a: "No. Speech, dictation, cloning, dubbing and transcription all run on your own computer. The internet is used to download the app, the voice engines and updates, and for the optional account and the usage statistics described below, which never include your text, recordings or voices.",
+  },
+  {
+    q: "Is FireVoice free?",
+    a: "Yes. FireVoice is free for everyone right now, with every feature included. Because it runs on your own computer, there is no usage meter either.",
+  },
+  {
+    q: "Do I need an account?",
+    a: "No. Everything works without one. A free FireVoice account is optional: sign in to keep your installs together and to send feedback from the app.",
+  },
+  {
+    q: "What does FireVoice collect?",
+    a: "To improve the app, FireVoice sends usage statistics, app and device details, and your approximate location. You can turn this off in Settings. It never sends your text, recordings or voices.",
+  },
+  {
+    q: "How does “Hey FireVoice” work?",
+    a: "Turn it on, then say “Hey FireVoice” in any program and keep talking. Dictation starts with what follows and stops when you stop. It works with accents, and Teach it your voice learns how you say it. Listening for the name happens on your computer; nothing is sent anywhere. It is off until you switch it on.",
+  },
+  {
+    q: "Does FireVoice run in the background?",
+    a: "It starts with Windows and waits quietly in the tray, so dictation is ready when you are. You can turn that off in Settings.",
   },
   {
     q: "What do I need to run it?",
