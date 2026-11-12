@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft } from "@/components/icons";
 import { api, Badge, Card, fmt, flag, ghost, Pager, SearchBox, stamp, Table, td, useApi, when } from "../kit";
 
 type Row = {
@@ -81,7 +82,8 @@ function UserDetail({ id, onBack }: { id: string; onBack: () => void }) {
   return (
     <div className="space-y-4">
       <button className={ghost} onClick={onBack}>
-        ← All accounts
+        <ArrowLeft className="size-3.5" />
+        All accounts
       </button>
       {error && <p className="text-[14px] text-fire-ink">{error}</p>}
       {u && (

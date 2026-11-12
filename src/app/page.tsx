@@ -2,12 +2,11 @@ import { SmoothScroll } from "@/site/motion";
 import { Announcement, Nav } from "@/site/Nav";
 import { Footer } from "@/site/Footer";
 import { Hero } from "@/site/sections/Hero";
-import { Apps } from "@/site/sections/Apps";
-import { Speed } from "@/site/sections/Speed";
+import { Why } from "@/site/sections/Why";
 import { HowItWorks } from "@/site/sections/HowItWorks";
 import { Features } from "@/site/sections/Features";
 import { Privacy } from "@/site/sections/Privacy";
-import { Voices } from "@/site/sections/Voices";
+import { Studio } from "@/site/sections/Studio";
 import { Faq, faqs } from "@/site/sections/Faq";
 import { Closing } from "@/site/sections/Closing";
 
@@ -17,7 +16,7 @@ const faqLd = {
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 };
 
-/** The home page: speech in, writing out. Each section is its own scene; the sheets slide over each other. */
+/** The home page: speech in, writing out, shown the way the app looks. */
 export default function Home() {
   return (
     <>
@@ -26,12 +25,11 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
-        <Apps />
-        <Speed />
+        <Why />
         <HowItWorks />
         <Features />
         <Privacy />
-        <Voices />
+        <Studio />
         <Faq />
         <Closing />
       </main>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { site } from "@/lib/site";
+import { Check, Mic } from "@/components/icons";
 
 // The site's shared parts: the FireVoice pill, the download button, the logo and section headings.
 
@@ -50,9 +51,7 @@ export function Pill({ state = "listening", level = 0.6, label, size = "md", cla
         style={{ width: h, height: h, background: "linear-gradient(180deg,#22c55e,#16a34a)", borderColor: "rgba(255,255,255,.25)" }}
         aria-label="Inserted"
       >
-        <svg width={h * 0.42} height={h * 0.42} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <path d="M5 12.5l4.5 4.5L19 7.5" />
-        </svg>
+        <Check className="text-white" size={h * 0.46} strokeWidth={3} trigger="manual" active />
       </span>
     );
   return (
@@ -61,13 +60,10 @@ export function Pill({ state = "listening", level = 0.6, label, size = "md", cla
       style={{ height: h, padding: `0 ${h * 0.36}px 0 ${h * 0.16}px`, boxShadow: state === "listening" ? `0 0 ${18 + level * 28}px -4px rgba(255,106,51,${0.25 + level * 0.45}), 0 22px 44px -18px rgba(0,0,0,.7)` : undefined }}
     >
       <span className="grid shrink-0 place-items-center rounded-full fire-dot" style={{ width: h - 12, height: h - 12, background: "linear-gradient(135deg,#ff8a4c,#ff4d2e)" }}>
-        <svg width={(h - 12) * 0.5} height={(h - 12) * 0.5} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
-          <rect x="9" y="3" width="6" height="11" rx="3" />
-          <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
-        </svg>
+        <Mic className="text-white" size={(h - 12) * 0.52} strokeWidth={2.2} />
       </span>
       {state === "writing" ? (
-        <span className="shimmer-text text-[13.5px] font-medium">{label ?? "Writing"}</span>
+        <span className="shimmer-text pr-0.5 text-[13.5px] leading-normal font-semibold whitespace-nowrap">{label ?? "Writing"}</span>
       ) : (
         <span className="flex h-[55%] items-center gap-[3px]" aria-hidden>
           {bars.map((b, i) => (
@@ -129,10 +125,15 @@ export function DownloadButton({ size = "md", tone = "fire", className = "" }: {
 }
 
 /** A section's heading block: eyebrow, serif heading, optional lede; centred unless `align="left"`. */
-export function Heading({ eyebrow, children, lede, align = "center", size = "lg", className = "" }: { eyebrow?: string; children: ReactNode; lede?: ReactNode; align?: "center" | "left"; size?: "lg" | "md"; className?: string }) {
+export function Heading({ eyebrow, icon, children, lede, align = "center", size = "lg", className = "" }: { eyebrow?: string; icon?: ReactNode; children: ReactNode; lede?: ReactNode; align?: "center" | "left"; size?: "lg" | "md"; className?: string }) {
   return (
     <div className={`${align === "center" ? "mx-auto text-center" : ""} max-w-3xl ${className}`}>
-      {eyebrow && <p className="eyebrow mb-5">{eyebrow}</p>}
+      {eyebrow && (
+        <p className="eyebrow mb-5">
+          {icon}
+          {eyebrow}
+        </p>
+      )}
       <h2 className={`display ${size === "lg" ? "display-lg" : "display-md"}`}>{children}</h2>
       {lede && <p className={`lede mt-6 ${align === "center" ? "mx-auto" : ""} max-w-xl`}>{lede}</p>}
     </div>

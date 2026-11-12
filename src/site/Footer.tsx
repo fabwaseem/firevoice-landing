@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { Pill } from "./ui";
+import { ArrowRight } from "@/components/icons";
 
 const COLUMNS: { title: string; links: { href: string; label: string; external?: boolean }[] }[] = [
   {
@@ -22,7 +23,7 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: "/#how", label: "How it works" },
       { href: "/#features", label: "Features" },
-      { href: "/#voices", label: "Voices" },
+      { href: "/#studio", label: "Voice studio" },
       { href: "/#faq", label: "FAQ" },
     ],
   },
@@ -48,20 +49,20 @@ export function Footer() {
   return (
     <footer className="relative bg-bg pt-20 pb-8">
       <div className="container-x">
-        <p className="eyebrow mb-4">One app, two things</p>
+        <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">One app, two things</p>
         <div className="grid gap-3 md:grid-cols-2">
-          <Link href="/#how" className="group flex items-center gap-5 rounded-[24px] bg-surface-2 p-3 pr-6 transition-colors hover:bg-surface-3">
+          <Link href="/#how" className="card group flex items-center gap-5 p-3 pr-6 transition-shadow hover:shadow-[var(--shadow-md)]">
             <div className="grid h-24 w-28 shrink-0 place-items-center rounded-[18px] bg-fire-soft">
               <Pill state="listening" level={0.5} size="sm" />
             </div>
             <div>
               <div className="text-[16px] font-semibold">Dictation</div>
               <p className="mt-1 text-[14px] text-ink-2">Speak in any program; clean, finished text goes in.</p>
-              <span className="mt-2 inline-block text-[14px] font-medium text-fire-ink transition-transform group-hover:translate-x-0.5">See how &rarr;</span>
+              <span className="mt-2 inline-block text-[14px] font-medium text-fire-ink ">See how <ArrowRight className="ml-1 inline size-3.5 align-[-2px]" /></span>
             </div>
           </Link>
-          <Link href="/#voices" className="group flex items-center gap-5 rounded-[24px] bg-surface-2 p-3 pr-6 transition-colors hover:bg-surface-3">
-            <div className="grid h-24 w-28 shrink-0 place-items-center rounded-[18px] bg-ember">
+          <Link href="/#studio" className="card group flex items-center gap-5 p-3 pr-6 transition-shadow hover:shadow-[var(--shadow-md)]">
+            <div className="grid h-24 w-28 shrink-0 place-items-center rounded-[18px] bg-night">
               <div className="flex h-8 items-center gap-[3px]" aria-hidden>
                 {[0.4, 0.7, 1, 0.6, 0.9, 0.5, 0.8, 0.45, 0.65].map((b, i) => (
                   <span key={i} className="w-[3px] rounded-full bg-fire-2" style={{ height: `${b * 100}%` }} />
@@ -71,7 +72,7 @@ export function Footer() {
             <div>
               <div className="text-[16px] font-semibold">Voice studio</div>
               <p className="mt-1 text-[14px] text-ink-2">Natural voices, cloning, dubbing and transcription.</p>
-              <span className="mt-2 inline-block text-[14px] font-medium text-fire-ink transition-transform group-hover:translate-x-0.5">Hear them &rarr;</span>
+              <span className="mt-2 inline-block text-[14px] font-medium text-fire-ink ">Hear them <ArrowRight className="ml-1 inline size-3.5 align-[-2px]" /></span>
             </div>
           </Link>
         </div>
@@ -79,7 +80,7 @@ export function Footer() {
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.4fr)]">
           {COLUMNS.map((c) => (
             <div key={c.title}>
-              <p className="eyebrow mb-4">{c.title}</p>
+              <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">{c.title}</p>
               <ul className="space-y-2.5">
                 {c.links.map((l) => (
                   <li key={l.label}>
@@ -109,7 +110,7 @@ export function Footer() {
             <line x1="84" y1="26" x2="84" y2="74" />
             <line x1="108" y1="42" x2="108" y2="58" />
           </svg>
-          <span className="font-serif leading-none tracking-[-0.04em] text-ink" style={{ fontSize: "clamp(72px,16.5vw,240px)" }}>
+          <span className="leading-none font-semibold tracking-[-0.06em] text-ink" style={{ fontSize: "clamp(64px,14.5vw,210px)" }}>
             FireVoice
           </span>
         </div>
@@ -156,7 +157,7 @@ function Notify() {
   }
   return (
     <div className="sm:col-span-2 lg:col-span-1">
-      <p className="eyebrow mb-4">Get notified</p>
+      <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">Get notified</p>
       <p className="text-[14.5px] text-ink-2">Hear when FireVoice comes to macOS, or what is new.</p>
       {state.kind === "done" ? (
         <p role="status" className="mt-4 rounded-2xl bg-fire-soft px-4 py-3 text-[14px] font-medium text-ink">

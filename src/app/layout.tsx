@@ -1,18 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
-// the display face: upright for headings, italic for the words they lean on
-const serif = Instrument_Serif({
-  variable: "--font-instrument",
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  display: "swap",
-});
-const mono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], display: "swap" });
+// the app's typeface (Urbanist), everywhere
+const sans = Urbanist({ variable: "--font-urbanist", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -48,8 +40,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf7f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#fbf7f1" },
+    { media: "(prefers-color-scheme: light)", color: "#f3f4f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#f3f4f7" },
   ],
 };
 
@@ -67,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${serif.variable} ${mono.variable}`}
+      className={sans.variable}
     >
       <body className="min-h-dvh">
           <a

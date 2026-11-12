@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DownloadButton, Wordmark } from "./ui";
+import { ArrowRight, Menu, X } from "@/components/icons";
 
 const LINKS = [
   { href: "#how", label: "How it works" },
   { href: "#features", label: "Features" },
-  { href: "#voices", label: "Voices" },
+  { href: "#studio", label: "Voice studio" },
   { href: "#privacy", label: "Privacy" },
   { href: "#faq", label: "FAQ" },
 ];
@@ -15,13 +16,11 @@ const LINKS = [
 /** The thin bar above the menu: what is new. */
 export function Announcement() {
   return (
-    <div className="relative z-40 bg-ember text-center text-[13px] text-[#f6efe6]">
+    <div className="relative z-40 bg-night text-center text-[13px] text-[#f4f5f8]">
       <a href="#features" className="group mx-auto flex h-10 max-w-[1180px] items-center justify-center gap-2 px-4">
         <span className="rounded-full bg-fire px-2 py-0.5 text-[10.5px] font-semibold tracking-wide text-white uppercase">New</span>
         <span>Start dictating by saying &ldquo;Hey FireVoice&rdquo;</span>
-        <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>
-          &rarr;
-        </span>
+        <ArrowRight className="size-3.5" />
       </a>
     </div>
   );
@@ -48,8 +47,8 @@ export function Nav() {
     <header className="pointer-events-none sticky top-0 z-50 px-3 pt-3">
       <nav
         aria-label="Main"
-        className={`pointer-events-auto mx-auto flex h-[58px] max-w-[880px] items-center gap-2 rounded-[20px] border pr-2 pl-4 transition-[background,box-shadow,border-color] duration-300 ${
-          scrolled ? "border-line bg-bg-elev/85 shadow-[0_12px_32px_-16px_rgba(23,19,15,0.25)] backdrop-blur-xl" : "border-line/60 bg-bg-elev/60 backdrop-blur-md"
+        className={`pointer-events-auto mx-auto flex h-[60px] max-w-[1200px] items-center gap-2 rounded-[18px] border pr-2 pl-4 transition-[background,box-shadow,border-color] duration-300 ${
+          scrolled ? "border-line bg-surface/85 shadow-[var(--shadow-md)] backdrop-blur-xl" : "border-transparent bg-transparent"
         }`}
       >
         <Link href="/" aria-label="FireVoice home" className="mr-2 shrink-0 rounded-lg">
@@ -77,9 +76,7 @@ export function Nav() {
             aria-controls="mobile-menu"
             onClick={() => setOpen((o) => !o)}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
       </nav>

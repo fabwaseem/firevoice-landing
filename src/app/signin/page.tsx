@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <AuthShell>
-      <Suspense fallback={<div className="h-[460px] rounded-[28px] bg-surface" />}>
+      <Suspense fallback={<div className="h-[460px]" />}>
         <SignIn />
       </Suspense>
     </AuthShell>

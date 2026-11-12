@@ -11,13 +11,3 @@ export const site = {
   releasesRepo: "fabwaseem/firevoice-releases",
   releases: "https://github.com/fabwaseem/firevoice-releases/releases",
 };
-
-export const nav = [
-  { href: "#voices", label: "Voices" },
-  { href: "#chapters", label: "Features" },
-  { href: "#dictation", label: "Dictation" },
-  { href: "#everyday", label: "Every day" },
-  { href: "#engines", label: "Engines" },
-  { href: "#developers", label: "Developers" },
-  { href: "#faq", label: "FAQ" },
-];

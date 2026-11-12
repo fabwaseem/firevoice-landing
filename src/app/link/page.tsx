@@ -9,7 +9,7 @@ export default function LinkPage() {
   return (
     <AuthShell>
       <Suspense fallback={<div className="h-80" />}>
-        <div className="rounded-[28px] bg-surface px-6 pt-10 pb-8 shadow-[0_30px_60px_-30px_rgba(23,19,15,0.35)] sm:px-9">
+        <div>
           <Approve />
         </div>
       </Suspense>

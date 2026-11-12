@@ -1,57 +1,81 @@
 @import "tailwindcss";
 
-/* FireVoice site. A warm, quiet page in the app's own palette: cream paper, near-black ink, the app's fire orange as
-   the one accent, and big rounded "sheets" (dark ember, deep fire) that slide over each other as you scroll.
-   Light only: the dark sheets give the contrast. */
+/* FireVoice site: the app's own look on a web page. Urbanist throughout (the app's typeface), the app's cool light greys and white cards, its
+   fire orange as the one accent, the soft coloured glows behind its pages, and its dark theme for the dark sections.
+   The tokens below are the app's (src/styles/globals.css in firevoice-desktop). */
 
 :root {
   color-scheme: light;
-  --bg: #fbf7f1; /* the page: warm paper */
-  --bg-elev: #fffdf9;
-  --surface: #fffdf9; /* cards on the page */
-  --surface-2: #f3ede4; /* sand: quiet panels */
-  --surface-3: #e9e1d5;
-  --ink: #17130f;
-  --ink-2: #463f38;
-  --muted: #6f665d;
-  --faint: #8f857b;
-  --line: rgba(23, 19, 15, 0.09);
-  --line-strong: rgba(23, 19, 15, 0.16);
+  --bg: #f3f4f7;
+  --bg-elev: #f9fafb;
+  --surface: #ffffff;
+  --surface-2: #f6f7f9;
+  --surface-3: #eceef3;
+  --ink: #111318;
+  --ink-2: #3a3f4b;
+  --muted: #676d7b;
+  --faint: #979dab;
+  --line: rgba(17, 19, 24, 0.075);
+  --line-strong: rgba(17, 19, 24, 0.13);
   --fire: #ff5a2d;
   --fire-2: #ff8a4c;
-  --fire-ink: #c63b10;
-  --fire-soft: #ffe6da;
+  --fire-ink: #d9431a;
+  --fire-soft: rgba(255, 90, 45, 0.1);
   --ok: #17935f;
+  --ok-soft: rgba(23, 147, 95, 0.11);
+  --info: #3473d6;
+  --info-soft: rgba(52, 115, 214, 0.11);
+  --violet: #6250d6;
+  --violet-soft: rgba(98, 80, 214, 0.1);
+  --teal: #1baf7a;
   --glow: rgba(255, 106, 51, 0.28);
-  --ember: #16110d; /* the dark sheets */
-  --ember-2: #221913;
-  --deep: #3a140a; /* the deep fire sheet */
-  --deep-2: #521c0d;
-  --shadow-lg: 0 40px 80px -40px rgba(23, 19, 15, 0.3), 0 12px 28px -14px rgba(23, 19, 15, 0.14);
-  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
-  --sheet-r: clamp(28px, 4vw, 56px);
+  --edge: inset 0 0 0 0 transparent;
+  --shadow-sm: 0 1px 2px rgba(17, 19, 24, 0.04), 0 1px 1px rgba(17, 19, 24, 0.02);
+  --shadow-md: 0 10px 28px -14px rgba(17, 19, 24, 0.2), 0 2px 6px rgba(17, 19, 24, 0.04);
+  --shadow-lg: 0 28px 64px -28px rgba(17, 19, 24, 0.3), 0 8px 20px -10px rgba(17, 19, 24, 0.1);
+  --blob-a: rgba(255, 138, 76, 0.2);
+  --blob-b: rgba(96, 196, 170, 0.14);
+  --blob-c: rgba(144, 132, 255, 0.14);
+  --night: #0b0c10;
+  --night-2: #0f1015;
 }
 
-/* parts of a dark sheet use the same names, flipped */
+/* a dark section: the app's dark theme */
 .on-dark {
-  --ink: #f6efe6;
-  --ink-2: #d9cfc3;
-  --muted: #a99d90;
-  --faint: #8a7f74;
-  --line: rgba(255, 245, 235, 0.1);
-  --line-strong: rgba(255, 245, 235, 0.18);
-  --surface: #221913;
-  --surface-2: #2b2019;
-  --fire-ink: #ff9a6b;
-  --fire-soft: rgba(255, 106, 61, 0.16);
-  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  color-scheme: dark;
+  --bg: #0b0c10;
+  --bg-elev: #0f1015;
+  --surface: #16181f;
+  --surface-2: #1c1f27;
+  --surface-3: #252933;
+  --ink: #f4f5f8;
+  --ink-2: #d2d6df;
+  --muted: #9da3b1;
+  --faint: #6f7584;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --fire: #ff6b3d;
+  --fire-2: #ff9c5e;
+  --fire-ink: #ff9c5e;
+  --fire-soft: rgba(255, 107, 61, 0.14);
+  --ok: #3dd08f;
+  --ok-soft: rgba(61, 208, 143, 0.13);
+  --info: #74aaff;
+  --info-soft: rgba(116, 170, 255, 0.14);
+  --violet: #9a8cff;
+  --violet-soft: rgba(154, 140, 255, 0.14);
+  --edge: inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+  --shadow-md: 0 14px 34px -14px rgba(0, 0, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 30px 70px -26px rgba(0, 0, 0, 0.85), 0 8px 22px -10px rgba(0, 0, 0, 0.55);
+  background-color: var(--bg);
   color: var(--ink);
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "Cascadia Code", Consolas, monospace;
+  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* no serif on this site: anything asking for one gets Inter */
+  --font-serif: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
 
   --color-bg: var(--bg);
   --color-bg-elev: var(--bg-elev);
@@ -69,37 +93,42 @@
   --color-fire-ink: var(--fire-ink);
   --color-fire-soft: var(--fire-soft);
   --color-ok: var(--ok);
-  --color-ember: var(--ember);
-  --color-ember-2: var(--ember-2);
-  --color-deep: var(--deep);
-  --color-deep-2: var(--deep-2);
+  --color-ok-soft: var(--ok-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-teal: var(--teal);
+  --color-night: var(--night);
+  --color-night-2: var(--night-2);
 
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-marquee: marquee 40s linear infinite;
-  --animate-eq: eq 0.9s ease-in-out infinite alternate;
   --animate-blink: blink 1s steps(2, start) infinite;
 }
 
 @keyframes marquee {
   to { transform: translateX(-50%); }
 }
-@keyframes eq {
-  0% { transform: scaleY(0.25); }
-  100% { transform: scaleY(1); }
-}
 @keyframes blink {
   to { visibility: hidden; }
 }
 @keyframes fade-up {
-  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
   to { opacity: 1; transform: none; }
 }
 @keyframes shimmer {
   from { background-position: 100% 0; }
   to { background-position: -120% 0; }
+}
+@keyframes blob {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -4%, 0) scale(1.08); }
 }
 
 @layer base {
@@ -113,7 +142,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "cv11", "ss01", "ss03";
     overflow-x: clip;
   }
   ::selection { background: var(--fire-soft); color: var(--ink); }
@@ -121,56 +149,88 @@
 }
 
 @layer components {
-  .container-x { @apply mx-auto w-full max-w-[1180px] px-4 sm:px-6 lg:px-8; }
+  .container-x { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8; }
 
-  /* small caps label above a heading */
-  .eyebrow { @apply text-[11.5px] font-medium tracking-[0.16em] uppercase text-muted; }
+  /* the small label above a heading: a pill, as in the app */
+  .eyebrow {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-[12.5px] font-medium text-ink-2;
+    box-shadow: var(--shadow-sm);
+  }
 
-  /* the serif headings, with an italic word or two (<em>) */
+  /* headings: Inter, tight and bold; <em> is the key words, in the fire gradient (upright) */
   .display {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 0.98;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
     color: var(--ink);
     text-wrap: balance;
   }
-  .display em { font-style: italic; letter-spacing: -0.01em; }
-  .display-xl { font-size: clamp(3.4rem, 9vw, 7.6rem); }
-  .display-lg { font-size: clamp(2.7rem, 6.4vw, 5.4rem); }
-  .display-md { font-size: clamp(2.2rem, 4.6vw, 3.9rem); line-height: 1.02; }
-  .display-sm { font-size: clamp(1.7rem, 2.8vw, 2.4rem); line-height: 1.08; }
-  .lede { @apply text-[16.5px] leading-relaxed text-ink-2 sm:text-[17.5px]; text-wrap: pretty; }
+  .display em {
+    font-style: normal;
+    background: linear-gradient(100deg, var(--fire-2), var(--fire) 55%, #ff3d6e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.02em;
+  }
+  .display-xl { font-size: clamp(2.7rem, 6.6vw, 5.4rem); letter-spacing: -0.045em; line-height: 0.98; }
+  .display-lg { font-size: clamp(2.2rem, 4.8vw, 3.9rem); }
+  .display-md { font-size: clamp(1.8rem, 3.4vw, 2.75rem); }
+  .display-sm { font-size: clamp(1.3rem, 2vw, 1.6rem); letter-spacing: -0.025em; line-height: 1.15; }
+  .lede { @apply text-[16.5px] leading-relaxed text-muted sm:text-[17.5px]; text-wrap: pretty; }
 
-  /* a big rounded sheet that the next one slides over */
-  .sheet { position: relative; border-radius: var(--sheet-r) var(--sheet-r) 0 0; }
-  .sheet-round { border-radius: var(--sheet-r); }
+  /* sections */
+  .section { @apply relative py-24 sm:py-32; }
 
   .btn {
-    @apply relative inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-6 text-[15px] font-semibold whitespace-nowrap transition-[transform,box-shadow,background-color] duration-300 outline-offset-4;
+    @apply relative inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-[15px] font-semibold whitespace-nowrap transition-[transform,box-shadow,background-color] duration-300 outline-offset-4;
   }
   .btn-fire {
     @apply text-white;
     background: linear-gradient(135deg, #ff8a4c, #ff4d2e);
-    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 12px 30px -12px rgba(255, 77, 46, 0.8);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 10px 26px -10px rgba(255, 77, 46, 0.75);
   }
-  .btn-fire:hover { transform: translateY(-1px); box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 18px 40px -14px rgba(255, 77, 46, 0.9); }
+  .btn-fire:hover { transform: translateY(-1px); box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.35) inset, 0 16px 34px -12px rgba(255, 77, 46, 0.85); }
   .btn-fire:active { transform: translateY(0) scale(0.98); }
-  .btn-line { @apply border border-line-strong bg-surface/70 text-ink backdrop-blur hover:bg-surface; }
-  .btn-sm { @apply h-10 px-4 text-[14px]; }
+  .btn-line { @apply border border-line-strong bg-surface text-ink hover:bg-surface-2; box-shadow: var(--shadow-sm); }
+  .btn-sm { @apply h-9 px-4 text-[13.5px]; }
+  .btn-lg { @apply h-12 px-6 text-[15.5px]; }
 
-  .card { @apply rounded-[26px] border border-line bg-surface; box-shadow: var(--edge); }
+  /* cards, as in the app: white, a hairline, a soft shadow */
+  .card { @apply rounded-[20px] border border-line bg-surface; box-shadow: var(--shadow-sm), var(--edge); }
+  .card-raised { @apply rounded-[20px] border border-line bg-surface; box-shadow: var(--shadow-lg), var(--edge); }
+  .fire-gradient { background: linear-gradient(135deg, #ff8a4c, #ff4d2e); }
+
+  /* the coloured glows behind the app's pages */
+  .ambient { position: relative; isolation: isolate; }
+  .ambient::before {
+    content: "";
+    position: absolute;
+    inset: -10% -5% auto -5%;
+    height: 120%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 42% at 18% 20%, var(--blob-a), transparent 70%),
+      radial-gradient(32% 38% at 82% 18%, var(--blob-c), transparent 70%),
+      radial-gradient(36% 40% at 60% 75%, var(--blob-b), transparent 70%);
+    filter: blur(8px);
+  }
 
   /* the FireVoice pill: the app's dictation pill, dark glass */
   .fv-pill {
     background: linear-gradient(180deg, rgba(30, 31, 39, 0.97), rgba(13, 14, 18, 0.98));
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
-      0 22px 44px -18px rgba(0, 0, 0, 0.7),
-      0 2px 8px rgba(0, 0, 0, 0.35),
+      0 22px 44px -18px rgba(0, 0, 0, 0.6),
+      0 2px 8px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.09),
       inset 0 -1px 0 rgba(0, 0, 0, 0.4);
     color: #f3f4f7;
+  }
+  .kbd {
+    @apply inline-flex h-7 min-w-7 items-center justify-center rounded-md border border-line-strong bg-surface px-1.5 font-mono text-[12px] font-medium text-ink-2;
+    box-shadow: 0 1px 0 var(--line-strong);
   }
 
   .mask-fade-x { mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent); }
@@ -182,10 +242,8 @@
     color: transparent;
     animation: shimmer 1.6s linear infinite;
   }
-  /* there for form-filling bots, out of the way of people */
   .honeypot { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-  /* hero entrance in plain CSS, so it plays before hydration */
-  .enter { animation: fade-up 0.9s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+  .enter { animation: fade-up 0.8s cubic-bezier(0.25, 1, 0.5, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
 }
 
 @media (prefers-reduced-motion: reduce) {

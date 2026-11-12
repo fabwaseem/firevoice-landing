@@ -1,9 +1,9 @@
 import { Heading } from "@/site/ui";
 import { Reveal } from "@/site/motion";
-import { FaqPanel } from "./FaqPanel";
+import { FaqActions, FaqPanel } from "./FaqPanel";
 
-// Questions and answers: on desktop a two-pane panel, the questions on the left and the answer arriving like a chat
-// message on the right; on phones an accordion. `faqs` also feeds the page's FAQ structured data.
+// Questions and answers: a short intro with a way to ask more on the left, an accordion of every question on the right
+// (stacked on phones). `faqs` also feeds the page's FAQ structured data.
 
 export const faqs: { q: string; a: string }[] = [
   {
@@ -58,15 +58,25 @@ export const faqs: { q: string; a: string }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="relative pt-28 pb-16 sm:pt-40 sm:pb-24">
-      <div className="container-x">
-        <Reveal>
-          <Heading eyebrow="FAQ">
-            <span id="faq-title">
-              Good <em>questions.</em>
-            </span>
-          </Heading>
-        </Reveal>
+    <section id="faq" aria-labelledby="faq-title" className="section ambient">
+      <div className="container-x grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <Reveal>
+            <Heading
+              eyebrow="FAQ"
+              align="left"
+              size="md"
+              lede="The short answers about how FireVoice works, what it needs and what stays on your computer."
+            >
+              <span id="faq-title">
+                Questions, <em>answered.</em>
+              </span>
+            </Heading>
+          </Reveal>
+          <Reveal delay={80}>
+            <FaqActions />
+          </Reveal>
+        </div>
         <FaqPanel faqs={faqs} />
       </div>
     </section>

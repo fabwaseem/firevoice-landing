@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft } from "@/components/icons";
 import { Badge, Card, fmt, flag, ghost, Pager, Ranked, SearchBox, stamp, Table, td, useApi, when } from "../kit";
 
 type Row = {
@@ -124,7 +125,8 @@ function InstallDetail({ id, onBack }: { id: string; onBack: () => void }) {
   return (
     <div className="space-y-4">
       <button className={ghost} onClick={onBack}>
-        ← All installs
+        <ArrowLeft className="size-3.5" />
+        All installs
       </button>
       {error && <p className="text-[14px] text-fire-ink">{error}</p>}
       <div>
