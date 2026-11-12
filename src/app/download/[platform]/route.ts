@@ -8,13 +8,18 @@ import { site } from "@/lib/site";
 //   /download/linux         the AppImage (runs on any distribution and updates itself)
 //   /download/linux-deb     the .deb (Ubuntu, Debian, Mint)
 //   /download/linux-rpm     the .rpm (Fedora, openSUSE)
+//   /download/macos         the disk image for Apple Silicon Macs (.dmg)
 const FILES: Record<string, (v: string) => string> = {
   windows: (v) => `FireVoice_${v}_x64-setup.exe`,
   "windows-msi": (v) => `FireVoice_${v}_x64_en-US.msi`,
   linux: (v) => `FireVoice_${v}_amd64.AppImage`,
   "linux-deb": (v) => `FireVoice_${v}_amd64.deb`,
   "linux-rpm": (v) => `FireVoice-${v}-1.x86_64.rpm`,
+  macos: (v) => `FireVoice_${v}_aarch64.dmg`,
 };
+
+// which update-feed platform each download needs: a release made before that platform was built has no such file
+const NEEDS: Record<string, string> = { macos: "darwin-aarch64" };
 
 export async function GET(_req: Request, ctx: { params: Promise<{ platform: string }> }) {
   const { platform } = await ctx.params;
@@ -22,8 +27,10 @@ export async function GET(_req: Request, ctx: { params: Promise<{ platform: stri
   if (!file) return Response.redirect(site.releases, 302);
   try {
     const r = await fetch(`https://github.com/${site.releasesRepo}/releases/latest/download/latest.json`, { next: { revalidate: 300 } });
-    const version = r.ok ? String(((await r.json()) as { version?: string }).version ?? "") : "";
-    if (/^\d+\.\d+\.\d+$/.test(version)) {
+    const feed = r.ok ? ((await r.json()) as { version?: string; platforms?: Record<string, unknown> }) : {};
+    const version = String(feed.version ?? "");
+    const ready = !NEEDS[platform] || !!feed.platforms?.[NEEDS[platform]];
+    if (/^\d+\.\d+\.\d+$/.test(version) && ready) {
       return Response.redirect(`https://github.com/${site.releasesRepo}/releases/download/v${version}/${file(version)}`, 302);
     }
   } catch {

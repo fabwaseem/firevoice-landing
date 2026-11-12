@@ -32,7 +32,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "What computer do I need?",
-    a: "A Windows or Linux computer. Dictation runs on the processor, and faster with a graphics card. For the voice studio, a recent NVIDIA graphics card makes it fastest; without one it still runs on the processor, just slower.",
+    a: "A Windows PC, a Mac with Apple Silicon (M1 or newer, macOS 11 or later), or a Linux computer. Dictation runs on the processor, and faster with a graphics card. For the voice studio, a recent NVIDIA graphics card makes it fastest; without one it still runs on the processor, just slower.",
   },
   {
     q: "Does it work offline?",
@@ -40,7 +40,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Can it start with my computer?",
-    a: "Yes. FireVoice starts with Windows and waits quietly in the tray, ready for the shortcut or \"Hey FireVoice\". You can turn that off in Settings.",
+    a: "Yes. FireVoice starts when you sign in to your computer (Windows, Mac or Linux) and waits quietly in the tray or menu bar, ready for the shortcut or \"Hey FireVoice\". You can turn that off in Settings.",
   },
   {
     q: "How do I start dictating?",
@@ -48,7 +48,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Is there a Mac version?",
-    a: "Not yet. FireVoice is for Windows and Linux today. Join the list at the bottom of this page and we will tell you when it arrives on the Mac.",
+    a: "Yes, for Macs with Apple Silicon (M1 or newer) on macOS 11 or later. The first time, open it with right-click > Open, because it is not yet signed by Apple. When you first dictate, allow the microphone, and allow FireVoice under Privacy & Security > Accessibility so it can type into other apps.",
   },
   {
     q: "What else can it do?",

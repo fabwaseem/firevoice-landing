@@ -8,6 +8,7 @@ export const site = {
   download: "https://github.com/fabwaseem/firevoice-releases/releases/latest",
   downloadWindows: "/download/windows",
   downloadLinux: "/download/linux",
+  downloadMac: "/download/macos",
   releasesRepo: "fabwaseem/firevoice-releases",
   releases: "https://github.com/fabwaseem/firevoice-releases/releases",
 };

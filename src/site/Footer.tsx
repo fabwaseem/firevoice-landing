@@ -12,6 +12,7 @@ const COLUMNS: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: site.downloadWindows, label: "Windows installer" },
       { href: "/download/windows-msi", label: "Windows MSI" },
+      { href: site.downloadMac, label: "macOS (Apple Silicon)" },
       { href: site.downloadLinux, label: "Linux AppImage" },
       { href: "/download/linux-deb", label: "Linux .deb" },
       { href: "/download/linux-rpm", label: "Linux .rpm" },
@@ -134,9 +135,9 @@ export function Footer() {
   );
 }
 
-/** "Get notified": the macOS version, Pro features or news, by email. */
+/** "Get notified": Pro features or news, by email. */
 function Notify() {
-  const [interest, setInterest] = useState<"mac" | "pro" | "news">("mac");
+  const [interest, setInterest] = useState<"pro" | "news">("news");
   const [state, setState] = useState<{ kind: "idle" | "busy" | "done" | "error"; text?: string }>({ kind: "idle" });
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -158,7 +159,7 @@ function Notify() {
   return (
     <div className="col-span-2 lg:col-span-1">
       <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">Get notified</p>
-      <p className="text-[14.5px] text-ink-2">Hear when FireVoice comes to macOS, or what is new.</p>
+      <p className="text-[14.5px] text-ink-2">Hear about new features and releases, by email.</p>
       {state.kind === "done" ? (
         <p role="status" className="mt-4 rounded-2xl bg-fire-soft px-4 py-3 text-[14px] font-medium text-ink">
           {state.text}
@@ -168,7 +169,6 @@ function Notify() {
           <div className="mb-2 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Tell me about">
             {(
               [
-                ["mac", "macOS"],
                 ["pro", "Pro features"],
                 ["news", "News"],
               ] as const

@@ -480,7 +480,7 @@ export function Hero() {
             </a>
           </div>
           <ul className="enter mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[13.5px] font-medium text-ink-2 lg:justify-start" style={enter(4)}>
-            {["Free", "Windows & Linux", "Works offline"].map((c) => (
+            {["Free", "Windows, Mac & Linux", "Works offline"].map((c) => (
               <li key={c} className="inline-flex items-center gap-1.5">
                 <span className="grid size-[18px] place-items-center rounded-full bg-ok-soft text-ok">
                   <Check className="size-3" strokeWidth={3} />

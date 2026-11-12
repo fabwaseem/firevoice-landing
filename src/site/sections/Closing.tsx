@@ -107,7 +107,7 @@ export function Closing() {
                 <p className="mt-4 max-w-md text-[17px] leading-relaxed text-white/90">FireVoice is free. Install it, press the shortcut, and talk.</p>
                 <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
                   <DownloadButton tone="line" className="!border-white !bg-white !text-[#111318] hover:!bg-white/90" />
-                  <p className="text-[14px] font-medium text-white/90">Windows and Linux · Free</p>
+                  <p className="text-[14px] font-medium text-white/90">Windows, macOS and Linux · Free</p>
                 </div>
               </div>
               <Demo run={inView} />
