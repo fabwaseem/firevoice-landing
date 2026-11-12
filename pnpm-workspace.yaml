@@ -3,3 +3,6 @@ allowBuilds:
   prisma: true
   sharp: false
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - '@kineticons/core@0.1.0'
+  - kineticons@0.1.0

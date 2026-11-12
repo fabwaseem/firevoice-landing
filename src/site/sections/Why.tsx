@@ -19,7 +19,7 @@ const PASSAGE =
 const written = (k: number) => Array.from({ length: k }, (_, i) => PASSAGE[i % PASSAGE.length]).join(" ");
 
 function Tile({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`card mi-trigger relative flex h-full flex-col overflow-hidden p-6 sm:p-7 ${className}`}>{children}</div>;
+  return <div className={`card ki-trigger relative flex h-full flex-col overflow-hidden p-6 sm:p-7 ${className}`}>{children}</div>;
 }
 
 function TileHead({ icon, title, children }: { icon: ReactNode; title: ReactNode; children?: ReactNode }) {

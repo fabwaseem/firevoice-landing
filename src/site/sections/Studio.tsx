@@ -22,7 +22,7 @@ const byVoice = (slug: string) => clips.find((c) => c.slug === slug) ?? clips[0]
 
 const CYCLE_MS = 6500;
 
-/* ---------- icons: the Motion Icons kit (they move when their button or row is pointed at) ---------- */
+/* ---------- icons: Kineticons (they move when their button or row is pointed at) ---------- */
 
 const I = {
   tts: AudioLines,
@@ -543,7 +543,7 @@ function Tools() {
                   aria-controls="st-panel"
                   tabIndex={on ? 0 : -1}
                   onClick={() => choose(i)}
-                  className={`mi-trigger group relative flex h-11 shrink-0 snap-start items-center gap-3 overflow-hidden rounded-[11px] px-3 text-left text-[14px] font-medium whitespace-nowrap transition-[background,color] duration-200 lg:h-10 ${
+                  className={`ki-trigger group relative flex h-11 shrink-0 snap-start items-center gap-3 overflow-hidden rounded-[11px] px-3 text-left text-[14px] font-medium whitespace-nowrap transition-[background,color] duration-200 lg:h-10 ${
                     on ? "bg-fire-soft text-fire-ink" : "text-muted hover:bg-surface-3/70 hover:text-ink"
                   }`}
                 >
@@ -664,7 +664,7 @@ const VoiceCard = memo(function VoiceCard({ clip, playing, onToggle }: { clip: C
             onClick={() => onToggle(clip.slug)}
             aria-label={`${playing ? "Pause" : "Play"} ${clip.name}, ${role}`}
             aria-pressed={playing}
-            className={`mi-trigger grid size-11 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 hover:scale-105 active:scale-95 ${playing ? "fire-gradient text-white" : "bg-surface-3 text-ink hover:bg-fire hover:text-white"}`}
+            className={`ki-trigger grid size-11 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 hover:scale-105 active:scale-95 ${playing ? "fire-gradient text-white" : "bg-surface-3 text-ink hover:bg-fire hover:text-white"}`}
           >
             <PlayGlyph playing={playing} className="size-4" />
           </button>
@@ -754,7 +754,7 @@ function VoiceRow() {
   }, [measure]);
   const page = (dir: 1 | -1) => strip.current?.scrollBy({ left: dir * Math.max(300, strip.current.clientWidth * 0.8), behavior: reducedMotion() ? "auto" : "smooth" });
 
-  const arrow = "mi-trigger grid size-10 place-items-center rounded-full border border-line-strong bg-surface text-ink transition-[opacity,background-color] duration-200 hover:bg-surface-3 disabled:pointer-events-none disabled:opacity-35";
+  const arrow = "ki-trigger grid size-10 place-items-center rounded-full border border-line-strong bg-surface text-ink transition-[opacity,background-color] duration-200 hover:bg-surface-3 disabled:pointer-events-none disabled:opacity-35";
 
   return (
     <div ref={viewRef} className="mt-16 sm:mt-20">

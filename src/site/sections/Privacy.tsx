@@ -147,7 +147,7 @@ export function Privacy() {
             <ul className="space-y-3">
               {FACTS.map((f, i) => (
                 <Reveal key={f.title} as="li" delay={i * 90}>
-                  <div className="card mi-trigger flex items-start gap-3.5 p-4 sm:p-5">
+                  <div className="card ki-trigger flex items-start gap-3.5 p-4 sm:p-5">
                     <span className="grid size-10 shrink-0 place-items-center rounded-[11px] bg-fire-soft text-fire">
                       <f.icon className="size-5" variant="duotone" />
                     </span>
@@ -160,7 +160,7 @@ export function Privacy() {
               ))}
             </ul>
             <Reveal delay={400}>
-              <Link href="/privacy" className="mi-trigger mt-5 inline-flex min-h-11 items-center gap-1.5 px-1 text-[15px] font-semibold text-fire-ink underline-offset-4 hover:underline">
+              <Link href="/privacy" className="ki-trigger mt-5 inline-flex min-h-11 items-center gap-1.5 px-1 text-[15px] font-semibold text-fire-ink underline-offset-4 hover:underline">
                 Read the privacy policy <ArrowRight className="size-4" />
               </Link>
             </Reveal>

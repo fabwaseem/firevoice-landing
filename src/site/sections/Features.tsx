@@ -574,7 +574,7 @@ function Tile({ span, icon, title, text, delay, children }: { span: string; icon
   const [ref, inView] = useInView<HTMLElement>("0px 0px -8% 0px");
   return (
     <Reveal delay={delay} className={span}>
-      <article ref={ref} className="card mi-trigger flex h-full flex-col gap-5 p-3 sm:p-4">
+      <article ref={ref} className="card ki-trigger flex h-full flex-col gap-5 p-3 sm:p-4">
         {children(inView)}
         <div className="flex items-start gap-3 px-1.5 pb-1.5">
           <span className="grid size-8 shrink-0 place-items-center rounded-[9px] bg-fire-soft text-fire">

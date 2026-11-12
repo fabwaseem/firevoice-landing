@@ -474,7 +474,7 @@ export function Hero() {
           </p>
           <div className="enter mt-8 flex flex-wrap justify-center gap-3 lg:justify-start" style={enter(3)}>
             <DownloadButton className="btn-lg" />
-            <a href="#how" className="btn btn-line btn-lg mi-trigger">
+            <a href="#how" className="btn btn-line btn-lg ki-trigger">
               See how it works
               <ArrowDown className="size-4" />
             </a>

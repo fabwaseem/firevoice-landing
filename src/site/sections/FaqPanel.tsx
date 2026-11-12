@@ -35,7 +35,7 @@ export function FaqPanel({ faqs }: { faqs: Faq[] }) {
                   aria-expanded={on}
                   aria-controls={panel}
                   onClick={() => setOpen(on ? null : i)}
-                  className="mi-trigger flex min-h-[60px] w-full items-center justify-between gap-4 rounded-[18px] px-5 py-3.5 text-left text-[15.5px] font-semibold tracking-[-0.01em] text-ink sm:px-6 sm:text-[16.5px]"
+                  className="ki-trigger flex min-h-[60px] w-full items-center justify-between gap-4 rounded-[18px] px-5 py-3.5 text-left text-[15.5px] font-semibold tracking-[-0.01em] text-ink sm:px-6 sm:text-[16.5px]"
                 >
                   {f.q}
                   <span
@@ -74,7 +74,7 @@ export function FaqActions() {
     <div className="mt-8 flex flex-col items-start gap-5">
       <Link
         href="/feedback"
-        className="mi-trigger group card flex w-full max-w-sm items-center gap-3.5 rounded-[18px] p-4 transition-[border-color,box-shadow] duration-300 hover:border-line-strong hover:shadow-[var(--shadow-md)]"
+        className="ki-trigger group card flex w-full max-w-sm items-center gap-3.5 rounded-[18px] p-4 transition-[border-color,box-shadow] duration-300 hover:border-line-strong hover:shadow-[var(--shadow-md)]"
       >
         <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-fire-soft text-fire">
           <MessageSquareText variant="duotone" className="size-5" />

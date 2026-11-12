@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * FireVoice's icons: the Motion Icons kit (src/vendor/motion-icons, copied from the kit by its `pnpm sync`), under the
+ * FireVoice's icons: Kineticons (the `kineticons` package, https://kineticons.fabwaseem.com), under the
  * names the app has always used. Every icon moves when the button, link or tab it is in is pointed at or focused.
  *
  *   import { Trash2, Mic } from "@/components/icons";
@@ -10,9 +10,9 @@
  *   <Play trigger="manual" active={playing} />    moves while something is on
  */
 import type { CSSProperties, SVGProps } from "react";
-import * as K from "@/vendor/motion-icons";
-import { MotionIcon } from "@/vendor/motion-icons/MotionIcon";
-import type { IconDef, Trigger, Variant } from "@/vendor/motion-icons/types";
+import * as K from "@kineticons/core/icons";
+import { KineticIcon } from "kineticons";
+import type { IconDef, Trigger, Variant } from "@kineticons/core";
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "ref" | "fill" | "strokeWidth" | "style"> {
   size?: number | string;
@@ -31,7 +31,8 @@ export type LucideIcon = Icon;
 
 function make(def: IconDef, name: string): Icon {
   const C = ({ size, strokeWidth, fill, variant, trigger, active, className, style, ...rest }: IconProps) => (
-    <MotionIcon
+    <KineticIcon
+      {...rest}
       icon={def}
       size={size === undefined ? undefined : Number(size)}
       strokeWidth={strokeWidth === undefined ? undefined : Number(strokeWidth)}
@@ -40,7 +41,6 @@ function make(def: IconDef, name: string): Icon {
       active={active}
       className={className}
       style={style}
-      svgProps={rest}
     />
   );
   C.displayName = name;
