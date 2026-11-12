@@ -13,8 +13,8 @@ export const TOKENS = {
   durationIn: 460,
   durationOut: 260,
   /** the duotone fill at rest and while active */
-  toneRest: 0.12,
-  toneActive: 0.22,
+  toneRest: 0.16,
+  toneActive: 0.28,
 } as const;
 
 const css = (d?: Decl): string => {
@@ -48,6 +48,7 @@ export function baseCss(): string {
 svg.mi{overflow:visible;--mi-tone:${t.toneRest};flex-shrink:0}
 svg.mi [data-p]{transform-box:fill-box;transform-origin:center;transition-property:transform,opacity,d,stroke-dashoffset;transition-duration:var(--mi-out,${t.durationOut}ms);transition-timing-function:${t.smooth}}
 svg.mi .mi-tone{fill:currentColor;stroke:none;fill-opacity:var(--mi-tone);transition:fill-opacity .25s ${t.smooth}}
+svg.mi .mi-halo{stroke-opacity:var(--mi-tone);transition:stroke-opacity .25s ${t.smooth}}
 ${TRIGGERS}:is(:hover,:focus-visible) svg.mi[data-trigger="hover"],svg.mi[data-trigger="hover"]:hover,svg.mi[data-active="true"]:not([data-trigger="none"]){--mi-tone:${t.toneActive}}
 ${TRIGGERS}:is(:hover,:focus-visible) svg.mi[data-trigger="hover"] [data-p],svg.mi[data-trigger="hover"]:hover [data-p],svg.mi[data-active="true"]:not([data-trigger="none"]) [data-p]{transition-duration:var(--mi-in,${t.durationIn}ms);transition-timing-function:var(--mi-ease,${t.springIn});transition-delay:var(--mi-delay,0ms)}
 @media (prefers-reduced-motion:reduce){svg.mi [data-p]{transition:none!important;animation:none!important}}

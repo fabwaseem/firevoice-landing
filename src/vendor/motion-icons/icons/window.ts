@@ -1,7 +1,10 @@
 import type { IconDef } from "../types";
 
-/** The window's own controls, on a 12 grid at a 1.2 stroke (drawn for 46 × 36 title bar buttons). */
-const base = { category: "window" as const, grid: 12, stroke: 1.2, variants: ["outline" as const] };
+/**
+ * The window's own controls, on a 12 grid (drawn for 46 × 36 title bar buttons). Their default stroke matches the
+ * rest of the kit (1.75 on 24); the title bar draws them at 12 px with strokeWidth 2.4 for a crisp 1.2 px line.
+ */
+const base = { category: "window" as const, grid: 12, stroke: 0.875 };
 
 export const windowMinimize: IconDef = {
   ...base,
@@ -43,7 +46,7 @@ export const windowRestore: IconDef = {
   motionNote: "The back window folds into the front, which grows into one.",
   parts: [
     { p: "back", d: "M4.25 3.25 V3.1 A1.35 1.35 0 0 1 5.6 1.75 H8.9 A1.35 1.35 0 0 1 10.25 3.1 V6.4 A1.35 1.35 0 0 1 8.9 7.75 H8.75" },
-    { p: "front", d: "M3.2 4.25 H6.8 A1.45 1.45 0 0 1 8.25 5.7 V9.3 A1.45 1.45 0 0 1 6.8 10.75 H3.2 A1.45 1.45 0 0 1 1.75 9.3 V5.7 A1.45 1.45 0 0 1 3.2 4.25 Z" },
+    { p: "front", role: "body", d: "M3.2 4.25 H6.8 A1.45 1.45 0 0 1 8.25 5.7 V9.3 A1.45 1.45 0 0 1 6.8 10.75 H3.2 A1.45 1.45 0 0 1 1.75 9.3 V5.7 A1.45 1.45 0 0 1 3.2 4.25 Z" },
   ],
   motion: {
     back: { to: { transform: "translate(-1.6px,1.6px)", opacity: 0 } },

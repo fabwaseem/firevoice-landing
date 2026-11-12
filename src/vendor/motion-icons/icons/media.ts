@@ -1,8 +1,11 @@
 import { circle } from "../geometry";
 import type { IconDef } from "../types";
 
-/** Play and pause share their commands, so one morphs into the other. */
-const PLAY = "M7.5 5.9 L7.5 18.1 L13 15.2 L13 8.8 Z M13 8.8 L18.6 12 L18.6 12 L13 15.2 Z";
+/**
+ * Play and pause share their commands, so one morphs into the other. The triangle is one closed shape (so its outline
+ * has no seam) and becomes the left bar; the second bar grows out of a point hidden at the triangle's tip.
+ */
+const PLAY = "M7.5 5.9 L7.5 18.1 L18.6 12 L18.6 12 Z M18.6 12 L18.6 12 L18.6 12 L18.6 12 Z";
 const PAUSE = "M7 5.5 L7 18.5 L10 18.5 L10 5.5 Z M14 5.5 L14 18.5 L17 18.5 L17 5.5 Z";
 
 export const play: IconDef = {
@@ -11,8 +14,8 @@ export const play: IconDef = {
   category: "media",
   tags: ["play", "pause", "start", "resume", "audio"],
   motionNote: "The rounded triangle splits into two bars (set it active while playing).",
-  // solid in every style: a play button reads best filled, and its rounded corners come from the stroke's round joins
-  parts: [{ p: "shape", solid: true, d: PLAY }],
+  // a body like any other: outline strokes it, duotone tints it, filled makes it solid (round joins round its corners)
+  parts: [{ p: "shape", role: "body", d: PLAY }],
   motion: { shape: { to: { d: `path("${PAUSE}")` } } },
 };
 
@@ -141,7 +144,8 @@ export const record: IconDef = {
   motionNote: "The dot pulses inside its ring.",
   parts: [
     { role: "line", d: circle(12, 12, 8.75) },
-    { p: "dot", role: "line", solid: true, d: circle(12, 12, 4.25) },
+    // a body, so outline draws it as a ring, duotone tints it and filled makes it solid
+    { p: "dot", role: "body", d: circle(12, 12, 4.25) },
   ],
   motion: { dot: { animation: "mi-pulse 1s cubic-bezier(.45,0,.55,1) infinite" } },
   keyframes: "@keyframes mi-pulse{50%{transform:scale(.72);opacity:.75}}",

@@ -21,6 +21,9 @@ export interface Part {
   area?: string;
   /** always drawn solid, whatever the style (equalizer bars, a play triangle) */
   solid?: boolean;
+  /** a line that crosses a body (a slash, a power line, an arrow coming out of a cloud): the filled style cuts a gap
+   * around it out of the body, so it stays visible on the solid shape */
+  knock?: boolean;
   /** measured as length 1 (pathLength), so a motion can draw it in whatever its real length */
   draw?: boolean;
 }

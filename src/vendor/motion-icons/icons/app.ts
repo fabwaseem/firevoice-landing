@@ -1,4 +1,4 @@
-import { circle, rr, rrTurned } from "../geometry";
+import { circle, rr } from "../geometry";
 import type { IconDef } from "../types";
 
 const GEAR =
@@ -79,18 +79,25 @@ export const voices: IconDef = {
   name: "voices",
   title: "Voices",
   category: "app",
-  tags: ["library", "books", "collection"],
-  motionNote: "The leaning book tips further while the middle one is pulled out.",
+  tags: ["voice", "speaker", "person", "talk", "library", "tts"],
+  motionNote: "The head lifts as if to speak, and the sound waves ripple out one after the other.",
   parts: [
-    // narrow spines with clear gaps, so the books stay apart when filled
-    { role: "body", d: rr(3.5, 4.5, 3.25, 15.5, 1.3) },
-    { p: "b2", role: "body", d: rr(9.25, 4.5, 3.25, 15.5, 1.3) },
-    { p: "b3", role: "body", d: rrTurned(15.5, 5.25, 3.25, 15, 1.3, -14, 17.1, 20.25) },
+    // a person: the head and the shoulders are bodies, so duotone and filled give them a soft or solid fill
+    { p: "head", role: "body", d: circle(8.75, 8, 3.5) },
+    { p: "torso", role: "body", d: "M3.25 19.75 C3.25 16.4 5.7 14.25 8.75 14.25 C11.8 14.25 14.25 16.4 14.25 19.75 Z" },
+    // the voice: two arcs from the mouth, the outer one larger
+    { p: "w1", d: "M16.6 7.6 a2.9 2.9 0 0 1 0 4.8" },
+    { p: "w2", d: "M19.2 5.2 a6.2 6.2 0 0 1 0 9.6" },
   ],
   motion: {
-    b2: { to: { transform: "translateY(-1.6px)" }, delay: 60 },
-    b3: { origin: "0% 100%", to: { transform: "rotate(-9deg)" } },
+    head: { to: { transform: "translateY(-0.8px) rotate(-4deg)" }, origin: "50% 100%" },
+    torso: { to: { transform: "translateY(-0.3px)" } },
+    // each wave comes back in from the mouth and settles a touch further out; the outer one follows
+    w1: { origin: "0% 50%", animation: "mi-voices-wave .62s cubic-bezier(.22,1,.36,1) 40ms both" },
+    w2: { origin: "0% 50%", animation: "mi-voices-wave .62s cubic-bezier(.22,1,.36,1) 130ms both" },
   },
+  keyframes:
+    "@keyframes mi-voices-wave{0%{opacity:.15;transform:translateX(-2.2px) scale(.82)}55%{opacity:1;transform:translateX(.9px) scale(1.04)}100%{opacity:1;transform:translateX(.5px)}}",
 };
 
 export const dictionary: IconDef = {
