@@ -77,7 +77,7 @@ export function Footer() {
           </Link>
         </div>
 
-        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.4fr)]">
+        <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.4fr)]">
           {COLUMNS.map((c) => (
             <div key={c.title}>
               <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">{c.title}</p>
@@ -156,7 +156,7 @@ function Notify() {
     }
   }
   return (
-    <div className="sm:col-span-2 lg:col-span-1">
+    <div className="col-span-2 lg:col-span-1">
       <p className="mb-4 text-[12px] font-semibold tracking-[0.08em] text-muted uppercase">Get notified</p>
       <p className="text-[14.5px] text-ink-2">Hear when FireVoice comes to macOS, or what is new.</p>
       {state.kind === "done" ? (

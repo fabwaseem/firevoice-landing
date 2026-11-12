@@ -36,11 +36,22 @@ export function Nav() {
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
+  // while the menu is open: Escape closes it, the page behind does not scroll, and widening to desktop closes it
   useEffect(() => {
     if (!open) return;
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const wide = window.matchMedia("(min-width: 1024px)");
+    const onWide = () => wide.matches && setOpen(false);
     window.addEventListener("keydown", esc);
-    return () => window.removeEventListener("keydown", esc);
+    wide.addEventListener("change", onWide);
+    const root = document.documentElement;
+    const before = root.style.overflow;
+    root.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", esc);
+      wide.removeEventListener("change", onWide);
+      root.style.overflow = before;
+    };
   }, [open]);
 
   return (
@@ -81,23 +92,32 @@ export function Nav() {
         </div>
       </nav>
       {open && (
-        <div id="mobile-menu" className="pointer-events-auto mx-auto mt-2 max-w-[880px] rounded-[20px] border border-line bg-bg-elev p-3 shadow-[var(--shadow-lg)] lg:hidden">
-          <ul className="grid">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a href={l.href} onClick={() => setOpen(false)} className="block rounded-xl px-3 py-3 text-[16px] font-medium text-ink hover:bg-surface-2">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <Link href="/signin" className="block rounded-xl px-3 py-3 text-[16px] font-medium text-ink hover:bg-surface-2">
+        <>
+          {/* the page behind dims; a tap on it closes the menu */}
+          <div aria-hidden className="pointer-events-auto fixed inset-0 -z-10 animate-[fade-in_0.2s_ease-out] bg-ink/25 backdrop-blur-[2px] lg:hidden" onClick={() => setOpen(false)} />
+          {/* floats over the page (out of its flow), so opening it never moves anything */}
+          <div
+            id="mobile-menu"
+            className="pointer-events-auto absolute inset-x-3 top-full mt-2 max-h-[calc(100dvh-96px)] origin-top animate-[menu-in_0.22s_cubic-bezier(0.32,0.72,0,1)] overflow-y-auto rounded-[20px] border border-line bg-surface p-2 shadow-[var(--shadow-lg)] lg:hidden"
+          >
+            <ul className="grid">
+              {LINKS.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} onClick={() => setOpen(false)} className="flex h-12 items-center rounded-xl px-3 text-[16px] font-medium text-ink hover:bg-surface-2">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-2 grid gap-2 border-t border-line p-1 pt-3">
+              <DownloadButton className="w-full" />
+              <Link href="/signin" onClick={() => setOpen(false)} className="btn btn-line w-full">
                 Sign in
               </Link>
-            </li>
-          </ul>
-          <DownloadButton className="mt-2 w-full" />
-        </div>
+            </div>
+          </div>
+          <style>{`@keyframes menu-in{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}@keyframes fade-in{from{opacity:0}to{opacity:1}}`}</style>
+        </>
       )}
     </header>
   );
